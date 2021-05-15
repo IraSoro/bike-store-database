@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QDebug>
+#include <QMessageBox>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"

@@ -36,7 +36,9 @@ void MainWindow::on_pushButton_clicked()
 
         }
         else {
-            ui->textEdit->insertPlainText("[-] Wrong Username or Password\n");
+            QMessageBox msgBox;
+            msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные или воспользуйтесь регистрацией.");
+            msgBox.exec();
         }
     }
 
