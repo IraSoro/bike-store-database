@@ -6,20 +6,21 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Добро пожаловать");
 
-    QSqlDatabase db;
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("C:/Users/User/Desktop/База_Данных/BD_Velosiped.db");
-    db.open();
+    bd = QSqlDatabase::addDatabase("QSQLITE");
+    bd.setDatabaseName("C:/Users/User/Desktop/База_Данных/BD_Velosiped.db");
+    bd.open();
 }
 
 MainWindow::~MainWindow()
 {
+    bd.close();
     delete ui;
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButton_clicked() //вход
 {
     QString LineEditLogin = ui->lineEdit->text();
     QString LineEditParol = ui->lineEdit_2->text();
@@ -39,8 +40,6 @@ void MainWindow::on_pushButton_clicked()
         if (query.next()){
             KlientLogin = query.value(0).toString();
             KlientParol = query.value(1).toString();
-            //ui->textEdit->insertPlainText(KlientLogin + " " + KlientParol + "\n");
-
         }
         else {
             QMessageBox msgBox;
@@ -51,44 +50,10 @@ void MainWindow::on_pushButton_clicked()
 
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_pushButton_2_clicked() //регистрация
 {
-    QString LineEditLogin = ui->lineEdit->text();
-    QString LineEditParol = ui->lineEdit_2->text();
-    QString LineEditFIO = ui->lineEdit_3->text();
-
-    if (LineEditLogin == "" || LineEditParol == "" || LineEditFIO == ""){
-        QMessageBox msgBox;
-        msgBox.setText("Вы ввели не все данные.");
-        msgBox.exec();
-        return;
-    }
-
-    QSqlQuery query;
-
-    if (query.exec("SELECT login_klienta, parol_klienta FROM Klient WHERE login_klienta = \'" +
-                   LineEditLogin + "\'")){
-
-        if (query.next()){
-            QMessageBox msgBox;
-            msgBox.setText("Данный логин уже существует.\nПридумайте другой.");
-            msgBox.exec();
-
-        }
-        else {
-            query.exec("INSERT INTO Klient (login_klienta, parol_klienta, fio_klienta) "
-                           "VALUES (\'" + LineEditLogin + "\', \'" + LineEditParol + "\', \'" + LineEditFIO + "\')");
-
-//                query.exec("SELECT login_klienta, parol_klienta, fio_klienta FROM Klient");
-
-//                while (query.next())
-//                {
-//                    QString _id = query.value(0).toString();
-//                    QString name = query.value(1).toString();
-//                    QString age = query.value(2).toString();
-//                    ui->textEdit->insertPlainText(_id+" "+name+" "+age+"\n");
-//                }
-        }
-    }
-
+    WindowRegKlient = new MainWindowRegKlient();
+    connect(WindowRegKlient, &MainWindowRegKlient::firstWindow, this, &MainWindow::show);
+    WindowRegKlient->show();
+    this->close();
 }

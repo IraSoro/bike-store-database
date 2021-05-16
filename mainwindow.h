@@ -5,9 +5,12 @@
 #include <QString>
 #include <QDebug>
 #include <QMessageBox>
+#include <QLabel>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
+
+#include "windowregklient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,8 +31,13 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QSqlDatabase bd;
+
     QString KlientLogin = "";
     QString KlientParol = "";
     QString KlientFIO = "";
+
+    MainWindowRegKlient *WindowRegKlient;
 };
 #endif // MAINWINDOW_H
