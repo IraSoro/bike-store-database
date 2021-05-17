@@ -18,17 +18,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    mainwindowklient.cpp \
+    windowklient.cpp \
     windowregklient.cpp
 
 HEADERS += \
     mainwindow.h \
-    mainwindowklient.h \
+    windowklient.h \
     windowregklient.h
 
 FORMS += \
     mainwindow.ui \
-    mainwindowklient.ui \
+    windowklient.ui \
     windowregklient.ui
 
 # Default rules for deployment.

@@ -11,6 +11,7 @@
 #include "QSqlQuery"
 
 #include "windowregklient.h"
+#include "windowklient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,5 +40,6 @@ private:
     QString KlientFIO = "";
 
     MainWindowRegKlient *WindowRegKlient;
+    MainWindowKlient *WindowKlient;
 };
 #endif // MAINWINDOW_H

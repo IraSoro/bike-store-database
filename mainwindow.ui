@@ -41,9 +41,6 @@
           <widget class="QLineEdit" name="lineEdit_2"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_3"/>
-         </item>
-         <item>
           <widget class="QPushButton" name="pushButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -65,56 +62,43 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="verticalLayoutWidget">
+       <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
-          <x>150</x>
-          <y>50</y>
-          <width>51</width>
-          <height>80</height>
+          <x>160</x>
+          <y>60</y>
+          <width>40</width>
+          <height>21</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Логин</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Пароль</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>ФИО</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Логин</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>90</y>
+          <width>40</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Пароль</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_2">

@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Добро пожаловать");
 
     bd = QSqlDatabase::addDatabase("QSQLITE");
-    bd.setDatabaseName("C:/Users/User/Desktop/База_Данных/BD_Velosiped.db");
+    bd.setDatabaseName("C:/Users/User/Desktop/bd/BD_Velosiped.db");
     bd.open();
 }
 
@@ -40,6 +40,12 @@ void MainWindow::on_pushButton_clicked() //вход
         if (query.next()){
             KlientLogin = query.value(0).toString();
             KlientParol = query.value(1).toString();
+
+            WindowKlient = new MainWindowKlient();
+            connect(WindowKlient, &MainWindowKlient::firstWindow, this, &MainWindow::show);
+            WindowKlient->show();
+            this->close();
+
         }
         else {
             QMessageBox msgBox;
@@ -47,7 +53,6 @@ void MainWindow::on_pushButton_clicked() //вход
             msgBox.exec();
         }
     }
-
 }
 
 void MainWindow::on_pushButton_2_clicked() //регистрация

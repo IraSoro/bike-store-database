@@ -2,6 +2,7 @@
 #define MAINWINDOWKLIENT_H
 
 #include <QMainWindow>
+#include <QListWidgetItem>
 
 namespace Ui {
 class MainWindowKlient;
@@ -14,6 +15,9 @@ class MainWindowKlient : public QMainWindow
 public:
     explicit MainWindowKlient(QWidget *parent = nullptr);
     ~MainWindowKlient();
+
+signals:
+    void firstWindow();
 
 private:
     Ui::MainWindowKlient *ui;

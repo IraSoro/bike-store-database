@@ -37,7 +37,7 @@ void MainWindowRegKlient::on_pushButton_clicked()
 
     QSqlQuery query;
 
-    if (query.exec("SELECT login_klienta, parol_klienta FROM Klient WHERE login_klienta = \'" +
+    if (query.exec("SELECT login_klienta FROM Klient WHERE login_klienta = \'" +
                    LineEditLogin + "\'")){
 
         if (query.next()){
@@ -47,6 +47,7 @@ void MainWindowRegKlient::on_pushButton_clicked()
 
         }
         else {
+
             query.exec("INSERT INTO Klient (login_klienta, parol_klienta, fio_klienta) "
                            "VALUES (\'" + LineEditLogin + "\', \'" + LineEditParol + "\', \'" + LineEditFIO + "\')");
 
@@ -62,6 +63,7 @@ void MainWindowRegKlient::on_pushButton_clicked()
 //                    QString age = query.value(2).toString();
 //                    ui->textEdit->insertPlainText(_id+" "+name+" "+age+"\n");
 //                }
-        }
+        }        
     }
+
 }
