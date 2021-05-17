@@ -2,7 +2,13 @@
 #define MAINWINDOWKLIENT_H
 
 #include <QMainWindow>
-#include <QListWidgetItem>
+#include <QString>
+#include <QDebug>
+#include <QMessageBox>
+#include <QLabel>
+
+#include "QtSql/QSqlDatabase"
+#include "QSqlQuery"
 
 namespace Ui {
 class MainWindowKlient;
@@ -19,8 +25,13 @@ public:
 signals:
     void firstWindow();
 
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindowKlient *ui;
+
+    QString SelectedBike;
 };
 
 #endif // MAINWINDOWKLIENT_H

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QSqlError>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,7 +11,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     bd = QSqlDatabase::addDatabase("QSQLITE");
     bd.setDatabaseName("C:/Users/User/Desktop/bd/BD_Velosiped.db");
-    bd.open();
+
+    if(bd.open()){
+            qDebug()<<"Base open";
+        } else {
+            qDebug()<<"Error open base";
+        }
 }
 
 MainWindow::~MainWindow()
@@ -32,7 +38,7 @@ void MainWindow::on_pushButton_clicked() //вход
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query(bd);
 
     if (query.exec("SELECT login_klienta, parol_klienta FROM Klient WHERE login_klienta = \'" +
                    LineEditLogin + "\' AND parol_klienta = \'" + LineEditParol + "\'")){
@@ -52,7 +58,10 @@ void MainWindow::on_pushButton_clicked() //вход
             msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные или воспользуйтесь регистрацией.");
             msgBox.exec();
         }
+    } else {
+        //qDebug() << query.lastError().text() << " " << query.lastError().number();
     }
+
 }
 
 void MainWindow::on_pushButton_2_clicked() //регистрация
