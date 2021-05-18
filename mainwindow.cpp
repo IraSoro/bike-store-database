@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_pushButton_clicked() //вход
+void MainWindow::on_pushButton_clicked() //вход клиента
 {
     QString LineEditLogin = ui->lineEdit->text();
     QString LineEditParol = ui->lineEdit_2->text();
@@ -70,10 +70,54 @@ void MainWindow::on_pushButton_clicked() //вход
 
 }
 
-void MainWindow::on_pushButton_2_clicked() //регистрация
+void MainWindow::on_pushButton_2_clicked() //регистрация клиента
 {
     WindowRegKlient = new MainWindowRegKlient();
     connect(WindowRegKlient, &MainWindowRegKlient::firstWindow, this, &MainWindow::show);
     WindowRegKlient->show();
     this->close();
+}
+
+void MainWindow::on_pushButton_3_clicked() //вход поставщика
+{
+    QString LineEditLogin = ui->lineEdit_3->text();
+    QString LineEditParol = ui->lineEdit_4->text();
+
+    LineEditLogin = "222";
+    LineEditParol = "222";
+
+    if (LineEditLogin == "" || LineEditParol == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не все данные.");
+        msgBox.exec();
+        return;
+    }
+
+    QSqlQuery query(bd);
+
+    if (query.exec("SELECT login_postavsika, parol_postavsika, id_postavsika FROM Postavsik WHERE login_postavsika = \'" +
+                   LineEditLogin + "\' AND parol_postavsika = \'" + LineEditParol + "\'")){
+
+        if (query.next()){
+            KlientLogin = query.value(0).toString();
+            KlientParol = query.value(1).toString();
+            IdPostavsika =  query.value(2).toInt();
+
+            qDebug()<<"IdPostavsika = "<<IdPostavsika;
+
+            WinPostavsika = new WindowPostavsika(IdPostavsika);
+            connect(WinPostavsika, &WindowPostavsika::firstWindow, this, &WindowPostavsika::show);
+            WinPostavsika->show();
+            this->close();
+
+        }
+        else {
+            QMessageBox msgBox;
+            msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные.");
+            msgBox.exec();
+        }
+    } else {
+        //qDebug() << query.lastError().text() << " " << query.lastError().number();
+    }
+
 }

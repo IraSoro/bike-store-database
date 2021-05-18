@@ -20,18 +20,21 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     windowklient.cpp \
+    windowpostavsika.cpp \
     windowregklient.cpp \
     zakazvelosipeda.cpp
 
 HEADERS += \
     mainwindow.h \
     windowklient.h \
+    windowpostavsika.h \
     windowregklient.h \
     zakazvelosipeda.h
 
 FORMS += \
     mainwindow.ui \
     windowklient.ui \
+    windowpostavsika.ui \
     windowregklient.ui \
     zakazvelosipeda.ui
 

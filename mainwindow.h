@@ -12,6 +12,7 @@
 
 #include "windowregklient.h"
 #include "windowklient.h"
+#include "windowpostavsika.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,6 +31,8 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -40,8 +43,10 @@ private:
     QString KlientFIO = "";
 
     int IdKlienta = 0;
+    int IdPostavsika = 0;
 
     MainWindowRegKlient *WindowRegKlient;
     MainWindowKlient *WindowKlient;
+    WindowPostavsika *WinPostavsika;
 };
 #endif // MAINWINDOW_H
