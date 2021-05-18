@@ -52,6 +52,19 @@ void MainWindowKlient::on_pushButton_clicked()  //показать
 
 void MainWindowKlient::on_pushButton_2_clicked() //заказать
 {
+    QSqlQuery query;
+
+    if (query.exec("SELECT kolichestvo FROM Sklad_Velosipedov WHERE id_velosipeda = " +QString::number(IdBike))){
+        if (query.next()){
+            if (query.value(0).toInt() == 0){
+                QMessageBox msgBox;
+                msgBox.setText("Данная модель отсутствует на складе.");
+                msgBox.exec();
+                return;
+            }
+        }
+    }
+
     Bike = new ZakazVelosipeda(IdKlienta, IdBike);
     connect(Bike, &ZakazVelosipeda::PersonWindow, this, &ZakazVelosipeda::show);
     Bike->show();
