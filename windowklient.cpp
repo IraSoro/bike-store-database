@@ -1,12 +1,14 @@
 #include "windowklient.h"
 #include "ui_windowklient.h"
 
-MainWindowKlient::MainWindowKlient(QWidget *parent) :
+MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindowKlient)
 {
     ui->setupUi(this);
     setWindowTitle("Личный кабинет");
+
+    IdKlienta = idKlienta;
 
     QSqlQuery query;
 
@@ -20,6 +22,7 @@ MainWindowKlient::MainWindowKlient(QWidget *parent) :
         }
     }
 
+    ui->pushButton_2->setEnabled(false);
 }
 
 MainWindowKlient::~MainWindowKlient()
@@ -27,12 +30,12 @@ MainWindowKlient::~MainWindowKlient()
     delete ui;
 }
 
-void MainWindowKlient::on_pushButton_clicked()
+void MainWindowKlient::on_pushButton_clicked()  //показать
 {
     SelectedBike = ui->listWidget->currentIndex().data().toString();
     QSqlQuery query;
 
-    if (query.exec("SELECT pic, opisanie FROM Velosiped WHERE model = \'" +
+    if (query.exec("SELECT pic, opisanie, id_velosipeda FROM Velosiped WHERE model = \'" +
                    SelectedBike + "\'")){
         if (query.next()){
             QPixmap img;
@@ -41,6 +44,16 @@ void MainWindowKlient::on_pushButton_clicked()
             scene->addPixmap(img.scaled(150,130));
             ui->graphicsView->setScene(scene);
             ui->textEdit->setText(query.value("opisanie").toString());
+            ui->pushButton_2->setEnabled(true);
+            IdBike = query.value("id_velosipeda").toInt();
         }
     }
+}
+
+void MainWindowKlient::on_pushButton_2_clicked() //заказать
+{
+    Bike = new ZakazVelosipeda(IdKlienta, IdBike);
+    connect(Bike, &ZakazVelosipeda::firstWindow, this, &ZakazVelosipeda::show);
+    Bike->show();
+    this->close();
 }

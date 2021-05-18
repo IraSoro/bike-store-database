@@ -10,6 +10,8 @@
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
 
+#include "zakazvelosipeda.h"
+
 namespace Ui {
 class MainWindowKlient;
 }
@@ -19,7 +21,7 @@ class MainWindowKlient : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindowKlient(QWidget *parent = nullptr);
+    explicit MainWindowKlient(int idKlienta, QWidget *parent = nullptr);
     ~MainWindowKlient();
 
 signals:
@@ -28,10 +30,16 @@ signals:
 private slots:
     void on_pushButton_clicked();
 
+    void on_pushButton_2_clicked();
+
 private:
     Ui::MainWindowKlient *ui;
 
+    ZakazVelosipeda *Bike;
+
     QString SelectedBike;
+    int IdKlienta = 0;
+    int IdBike = 0;
 };
 
 #endif // MAINWINDOWKLIENT_H

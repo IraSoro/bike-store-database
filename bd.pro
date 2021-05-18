@@ -19,17 +19,20 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     windowklient.cpp \
-    windowregklient.cpp
+    windowregklient.cpp \
+    zakazvelosipeda.cpp
 
 HEADERS += \
     mainwindow.h \
     windowklient.h \
-    windowregklient.h
+    windowregklient.h \
+    zakazvelosipeda.h
 
 FORMS += \
     mainwindow.ui \
     windowklient.ui \
-    windowregklient.ui
+    windowregklient.ui \
+    zakazvelosipeda.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

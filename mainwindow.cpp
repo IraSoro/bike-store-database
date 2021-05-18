@@ -43,14 +43,17 @@ void MainWindow::on_pushButton_clicked() //вход
 
     QSqlQuery query(bd);
 
-    if (query.exec("SELECT login_klienta, parol_klienta FROM Klient WHERE login_klienta = \'" +
+    if (query.exec("SELECT login_klienta, parol_klienta, id_klienta FROM Klient WHERE login_klienta = \'" +
                    LineEditLogin + "\' AND parol_klienta = \'" + LineEditParol + "\'")){
 
         if (query.next()){
             KlientLogin = query.value(0).toString();
             KlientParol = query.value(1).toString();
+            IdKlienta =  query.value(2).toInt();
 
-            WindowKlient = new MainWindowKlient();
+            qDebug()<<"IdKlienta = "<<IdKlienta;
+
+            WindowKlient = new MainWindowKlient(IdKlienta);
             connect(WindowKlient, &MainWindowKlient::firstWindow, this, &MainWindow::show);
             WindowKlient->show();
             this->close();

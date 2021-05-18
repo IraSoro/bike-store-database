@@ -39,6 +39,8 @@ private:
     QString KlientParol = "";
     QString KlientFIO = "";
 
+    int IdKlienta = 0;
+
     MainWindowRegKlient *WindowRegKlient;
     MainWindowKlient *WindowKlient;
 };
