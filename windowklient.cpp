@@ -53,7 +53,7 @@ void MainWindowKlient::on_pushButton_clicked()  //показать
 void MainWindowKlient::on_pushButton_2_clicked() //заказать
 {
     Bike = new ZakazVelosipeda(IdKlienta, IdBike);
-    connect(Bike, &ZakazVelosipeda::firstWindow, this, &ZakazVelosipeda::show);
+    connect(Bike, &ZakazVelosipeda::PersonWindow, this, &ZakazVelosipeda::show);
     Bike->show();
     this->close();
 }

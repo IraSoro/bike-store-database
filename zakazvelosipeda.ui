@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>382</width>
-    <height>229</height>
+    <width>458</width>
+    <height>213</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>151</width>
+      <width>261</width>
       <height>161</height>
      </rect>
     </property>
@@ -27,7 +27,7 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>280</x>
       <y>10</y>
       <width>160</width>
       <height>161</height>
@@ -40,7 +40,7 @@
      <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>Заказать</string>
+        <string>Сохранить</string>
        </property>
       </widget>
      </item>
@@ -52,7 +52,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>382</width>
+     <width>458</width>
      <height>21</height>
     </rect>
    </property>

@@ -7,6 +7,9 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QDate>
+#include <QDateTime>
+#include <QPrinter>
+#include <QTextDocument>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
@@ -24,7 +27,10 @@ public:
     ~ZakazVelosipeda();
 
 signals:
-    void firstWindow();
+    void PersonWindow();
+
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::ZakazVelosipeda *ui;
@@ -32,6 +38,7 @@ private:
     int IdKlienta = 0;
     int IdBike = 0;
 
+    QString html = "";
 
 };
 
