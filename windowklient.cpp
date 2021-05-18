@@ -30,18 +30,17 @@ MainWindowKlient::~MainWindowKlient()
 void MainWindowKlient::on_pushButton_clicked()
 {
     SelectedBike = ui->listWidget->currentIndex().data().toString();
-
     QSqlQuery query;
 
-    if (query.exec("SELECT pic FROM Velosiped WHERE model = \'" +
+    if (query.exec("SELECT pic, opisanie FROM Velosiped WHERE model = \'" +
                    SelectedBike + "\'")){
         if (query.next()){
-            qDebug()<<"1111"<<query.value(0);
+            QPixmap img;
+            img.loadFromData(query.value("pic").toByteArray(),"jpg");
             QGraphicsScene *scene = new QGraphicsScene;
-            scene->addPixmap(QPixmap(query.value(0).toString()));
-            scene->addText("test");
+            scene->addPixmap(img.scaled(150,130));
             ui->graphicsView->setScene(scene);
+            ui->textEdit->setText(query.value("opisanie").toString());
         }
     }
-
 }

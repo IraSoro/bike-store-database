@@ -31,6 +31,9 @@ void MainWindow::on_pushButton_clicked() //вход
     QString LineEditLogin = ui->lineEdit->text();
     QString LineEditParol = ui->lineEdit_2->text();
 
+    LineEditLogin = '2';
+    LineEditParol = '2';
+
     if (LineEditLogin == "" || LineEditParol == ""){
         QMessageBox msgBox;
         msgBox.setText("Вы ввели не все данные.");
