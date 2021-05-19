@@ -2,6 +2,16 @@
 #define WINDOWPOSTAVSIKA_H
 
 #include <QMainWindow>
+#include <QString>
+#include <QDebug>
+#include <QMessageBox>
+#include <QLabel>
+#include <QTabWidget>
+#include <QFileDialog>
+#include <QDateTime>
+
+#include "QtSql/QSqlDatabase"
+#include "QSqlQuery"
 
 namespace Ui {
 class WindowPostavsika;
@@ -18,8 +28,16 @@ public:
 signals:
     void firstWindow();
 
+private slots:
+    void on_pushButton_Add_clicked();
+
+    void on_pushButton_Open_clicked();
+
 private:
     Ui::WindowPostavsika *ui;
+
+    QString FileName = "";
+    int IdPostavsika = 0;
 };
 
 #endif // WINDOWPOSTAVSIKA_H

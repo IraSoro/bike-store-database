@@ -54,15 +54,6 @@ void MainWindowRegKlient::on_pushButton_clicked()
             this->close();
             emit firstWindow();
 
-//                query.exec("SELECT login_klienta, parol_klienta, fio_klienta FROM Klient");
-
-//                while (query.next())
-//                {
-//                    QString _id = query.value(0).toString();
-//                    QString name = query.value(1).toString();
-//                    QString age = query.value(2).toString();
-//                    ui->textEdit->insertPlainText(_id+" "+name+" "+age+"\n");
-//                }
         }        
     }
 
