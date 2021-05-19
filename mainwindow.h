@@ -13,6 +13,7 @@
 #include "windowregklient.h"
 #include "windowklient.h"
 #include "windowpostavsika.h"
+#include "windowpredpriatia.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,6 +34,8 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_Pred_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -44,9 +47,11 @@ private:
 
     int IdKlienta = 0;
     int IdPostavsika = 0;
+    int IdPredpriatia = 0;
 
     MainWindowRegKlient *WindowRegKlient;
     MainWindowKlient *WindowKlient;
     WindowPostavsika *WinPostavsika;
+    WindowPredpriatia *WinPred;
 };
 #endif // MAINWINDOW_H

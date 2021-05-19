@@ -22,12 +22,11 @@ WindowPostavsika::~WindowPostavsika()
 void WindowPostavsika::on_pushButton_Add_clicked()
 {
     QString LineEditName = ui->lineEdit_Name->text();
-    int SpinBoxCount = ui->spinBox_Count->value();
     QString LineEditPrice = ui->lineEdit_Price->text();
     QString LineEditPic = ui->lineEdit_Pic->text();
     QString ComboBoxCategory = ui->comboBoxC->currentText();
 
-    if (LineEditName == "" || LineEditPrice == "" || LineEditPic == "" || SpinBoxCount == 0){
+    if (LineEditName == "" || LineEditPrice == "" || LineEditPic == ""){
         QMessageBox msgBox;
         msgBox.setText("Вы ввели не все данные.");
         msgBox.exec();
@@ -43,10 +42,10 @@ void WindowPostavsika::on_pushButton_Add_clicked()
     QString KodCompl = "К - "+QDateTime::currentDateTime().toString(Qt::ISODate);
 
     queryCompl.exec("INSERT INTO PostavlyaemoeComplect (id_postavsika, kod_complect, kod_postavsika,"
-                    "naimenovanie, kategoria, kolichestvo, cena) "
+                    "naimenovanie, kategoria, cena) "
                     "VALUES (" + QString::number(IdPostavsika) + ", \'"+ KodCompl + "\',\'" +
                     queryPos.value("kod_postavsika").toString()+"\', \'" +LineEditName + "\', \'" +
-                    ComboBoxCategory + "\'," + QString::number(SpinBoxCount)+ ", " + LineEditPrice  +")" );
+                    ComboBoxCategory + "\'," + LineEditPrice  +")" );
 
     QMessageBox msgBox;
     msgBox.setText("Введенное комплектующее успешно добавлено");

@@ -21,6 +21,7 @@ SOURCES += \
     mainwindow.cpp \
     windowklient.cpp \
     windowpostavsika.cpp \
+    windowpredpriatia.cpp \
     windowregklient.cpp \
     zakazvelosipeda.cpp
 
@@ -28,6 +29,7 @@ HEADERS += \
     mainwindow.h \
     windowklient.h \
     windowpostavsika.h \
+    windowpredpriatia.h \
     windowregklient.h \
     zakazvelosipeda.h
 
@@ -35,6 +37,7 @@ FORMS += \
     mainwindow.ui \
     windowklient.ui \
     windowpostavsika.ui \
+    windowpredpriatia.ui \
     windowregklient.ui \
     zakazvelosipeda.ui
 

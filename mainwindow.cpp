@@ -41,7 +41,7 @@ void MainWindow::on_pushButton_clicked() //вход клиента
         return;
     }
 
-    QSqlQuery query(bd);
+    QSqlQuery query;
 
     if (query.exec("SELECT login_klienta, parol_klienta, id_klienta FROM Klient WHERE login_klienta = \'" +
                    LineEditLogin + "\' AND parol_klienta = \'" + LineEditParol + "\'")){
@@ -93,7 +93,7 @@ void MainWindow::on_pushButton_3_clicked() //вход поставщика
         return;
     }
 
-    QSqlQuery query(bd);
+    QSqlQuery query;
 
     if (query.exec("SELECT login_postavsika, parol_postavsika, id_postavsika FROM Postavsik WHERE login_postavsika = \'" +
                    LineEditLogin + "\' AND parol_postavsika = \'" + LineEditParol + "\'")){
@@ -120,4 +120,43 @@ void MainWindow::on_pushButton_3_clicked() //вход поставщика
         //qDebug() << query.lastError().text() << " " << query.lastError().number();
     }
 
+}
+
+void MainWindow::on_pushButton_Pred_clicked()
+{
+    QString LineEditKod = ui->lineEdit_KodPred->text();
+    QString LineEditParol = ui->lineEdit_ParolPred->text();
+
+    LineEditKod = "П-1";
+    LineEditParol = "1";
+
+    if (LineEditKod == "" || LineEditParol == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не все данные.");
+        msgBox.exec();
+        return;
+    }
+
+    QSqlQuery query;
+
+    if (query.exec("SELECT id_predpriatia FROM Predpriatie WHERE kod_predpriatia = \'" +
+                   LineEditKod + "\' AND parol_predpriatia = \'" + LineEditParol + "\'")){
+
+        if (query.next()){
+            IdPredpriatia =  query.value(0).toInt();
+
+            qDebug()<<"IdPredpriatia = "<<IdPredpriatia;
+
+            WinPred = new WindowPredpriatia(IdPredpriatia);
+            connect(WinPred, &WindowPredpriatia::firstWindow, this, &WindowPredpriatia::show);
+            WinPred->show();
+            this->close();
+
+        }
+        else {
+            QMessageBox msgBox;
+            msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные.");
+            msgBox.exec();
+        }
+    }
 }
