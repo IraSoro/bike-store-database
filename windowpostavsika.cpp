@@ -26,7 +26,7 @@ void WindowPostavsika::on_pushButton_Add_clicked()
     QString LineEditPic = ui->lineEdit_Pic->text();
     QString ComboBoxCategory = ui->comboBoxC->currentText();
 
-    if (LineEditName == "" || LineEditPrice == "" || LineEditPic == ""){
+    if (LineEditName == "" || LineEditPrice == "" /*|| LineEditPic == ""*/){
         QMessageBox msgBox;
         msgBox.setText("Вы ввели не все данные.");
         msgBox.exec();

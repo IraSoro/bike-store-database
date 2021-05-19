@@ -35,13 +35,13 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     qDebug()<<"Start = "<<DateTimeEditStart<< "Finish = "<<DateTimeEditFinish;
 
 
-//    if (LineEditName == "" || LineEditKod == "" || LineEditDir == "" || LineEditBuh == "" || LineEditChet == ""
-//                           || LineEditLogin == "" || LineEditParol == ""){
-//        QMessageBox msgBox;
-//        msgBox.setText("Вы ввели не все данные.");
-//        msgBox.exec();
-//        return;
-//    }
+    if (LineEditName == "" || LineEditKod == "" || LineEditDir == "" || LineEditBuh == "" || LineEditChet == ""
+                           || LineEditLogin == "" || LineEditParol == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не все данные.");
+        msgBox.exec();
+        return;
+    }
 
     QSqlQuery query, queryDoc, queryPos;
 
@@ -56,7 +56,8 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     if (queryPos.first())
         qDebug()<<queryPos.value(0).toString();
 
-    queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET data_okonchania = \'" + DateTimeEditFinish.toString(Qt::ISODateWithMs) + "\'WHERE id_postavsika = "+
+    queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET data_nachala = \'" + DateTimeEditStart.toString(Qt::ISODateWithMs) +
+                  "\' , data_okonchania = \'" + DateTimeEditFinish.toString(Qt::ISODateWithMs) + "\'WHERE id_postavsika = "+
                   queryPos.value(0).toString());
 
 
