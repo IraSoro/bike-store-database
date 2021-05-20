@@ -35,6 +35,11 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
 
     ui->pushButton_Pay->setEnabled(false);
 
+    ui->tableWidget->setColumnCount(3);
+    QStringList name_table;
+    name_table << "Модель" << "Количество" << "Цена";
+    ui->tableWidget->setHorizontalHeaderLabels(name_table);
+
 }
 
 WindowPredpriatia::~WindowPredpriatia()
@@ -227,6 +232,73 @@ void WindowPredpriatia::on_pushButton_AddCount_clicked()
 
 void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
 {
+    ui->tableWidget->clear();
+
+    if (ui->listWidget_PostInBasket->currentIndex().data().toString() == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Поставщик не выбран.");
+        msgBox.exec();
+        return;
+    }
+
+    ui->pushButton_Pay->setEnabled(true);
+
+    QString SelectedPost = ui->listWidget_PostInBasket->currentIndex().data().toString();
+    QString IdSelectedPostInBasket = "";
+
+    QSqlQuery querySearchPost;
+
+    if (querySearchPost.exec("SELECT id_postavsika FROM Postavsik WHERE nazvanie = \'" + SelectedPost + "\'")){
+        if (querySearchPost.first()){
+            IdSelectedPostInBasket = querySearchPost.value(0).toString();
+            qDebug()<<"id = "<<IdSelectedPostInBasket;
+        }
+    }
+
+    QSqlQuery queryCompl;
+
+
+    int sum = 0;
+    QString NameModel = "";
+    QSqlQuery queryZakazCompl;
+    if (queryZakazCompl.exec("SELECT * FROM Zakaz_complect WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
+
+        int i = 0;
+//        while(queryZakazCompl.next()){
+//            i++;
+//        }
+
+        ui->tableWidget->setRowCount(10);
+        ui->tableWidget->setColumnCount(3);
+        QStringList name_table;
+        name_table << "Модель" << "Количество" << "Цена";
+        ui->tableWidget->setHorizontalHeaderLabels(name_table);
+        i = 0;
+        while (queryZakazCompl.next()){
+            ui->tableWidget->insertRow( ui->tableWidget->rowCount() );
+
+            QString IdModel = queryZakazCompl.value("id_complect").toString();
+            qDebug()<<"id model = "<<IdModel;
+            if (queryCompl.exec("SELECT naimenovanie FROM Postavsik WHERE id_complect = " + IdModel)){
+                if (queryCompl.first()){
+                    NameModel = queryCompl.value(0).toString();
+                }
+            }
+
+            QTableWidgetItem *itm = new QTableWidgetItem(NameModel);
+            ui->tableWidget->setItem(i,0,itm);
+            QTableWidgetItem *itm1 = new QTableWidgetItem(queryZakazCompl.value("kolichestvo").toString());
+            ui->tableWidget->setItem(i,1,itm1);
+            sum += queryZakazCompl.value("cena").toInt();
+            QTableWidgetItem *itm2 = new QTableWidgetItem(queryZakazCompl.value("cena").toString());
+            ui->tableWidget->setItem(i,2,itm2);
+            ui->tableWidget->update();
+            i++;
+
+        }
+    }
+
+    ui->lineEdit_Total->setText(QString::number(sum));
 
 
 }

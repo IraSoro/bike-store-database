@@ -427,8 +427,8 @@
      <widget class="QLabel" name="label_15">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>230</y>
+        <x>390</x>
+        <y>240</y>
         <width>47</width>
         <height>13</height>
        </rect>
@@ -437,11 +437,11 @@
        <string>Итого:</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="lineEdit_Total">
       <property name="geometry">
        <rect>
-        <x>440</x>
-        <y>230</y>
+        <x>430</x>
+        <y>240</y>
         <width>111</width>
         <height>20</height>
        </rect>
@@ -450,8 +450,8 @@
      <widget class="QPushButton" name="pushButton_Pay">
       <property name="geometry">
        <rect>
-        <x>440</x>
-        <y>260</y>
+        <x>430</x>
+        <y>270</y>
         <width>111</width>
         <height>23</height>
        </rect>
@@ -470,16 +470,6 @@
        </rect>
       </property>
      </widget>
-     <widget class="QTableView" name="tableView">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>40</y>
-        <width>211</width>
-        <height>192</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_19">
       <property name="geometry">
        <rect>
@@ -491,6 +481,16 @@
       </property>
       <property name="text">
        <string>Отложенные комплектующие</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>40</y>
+        <width>311</width>
+        <height>192</height>
+       </rect>
       </property>
      </widget>
     </widget>
