@@ -13,6 +13,22 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
     ui->dateTimeEdit_Start->setDateTime(QDateTime::currentDateTime());
     ui->dateTimeEdit_Finish->setDateTime(QDateTime::currentDateTime().addYears(2));
 
+
+    QSqlQuery query;
+
+    if (query.exec("SELECT nazvanie FROM Postavsik")){
+        int i = 0;
+        while (query.next()){
+            QListWidgetItem * newItem = new QListWidgetItem ;
+            newItem -> setText(query.value(0).toString());
+            ui->listWidget_Post-> insertItem(i , newItem);
+            i++;
+        }
+    }
+    ui->pushButton_ShowModel->setEnabled(false);
+    ui->pushButton_AddCount->setEnabled(false);
+    ui->spinBox->setValue(10);
+
 }
 
 WindowPredpriatia::~WindowPredpriatia()
@@ -65,5 +81,107 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
 
 //    this->close();
 //    emit firstWindow();
+
+}
+
+void WindowPredpriatia::on_pushButton_ShowKat_clicked()
+{
+    ui->listWidget_Kat->clear();
+    ui->listWidget_Model->clear();
+
+
+    QString SelectedPost = ui->listWidget_Post->currentIndex().data().toString();
+    //qDebug()<<"SelectedPost = "<<SelectedPost;
+
+    QSqlQuery querySearchPost;
+
+    if (querySearchPost.exec("SELECT id_postavsika FROM Postavsik WHERE nazvanie = \'" + SelectedPost + "\'")){
+        if (querySearchPost.first()){
+            IdSelectedPost = querySearchPost.value(0).toInt();
+            //qDebug()<<"id = "<<IdSelectedPost;
+        }
+    }
+
+    if (SelectedPost != ""){
+       ui->pushButton_ShowModel->setEnabled(true);
+       QSqlQuery query;
+
+       int i = 0;
+       if (query.exec("SELECT kategoria FROM PostavlyaemoeComplect WHERE id_postavsika = " + QString::number(IdSelectedPost))){
+           while (query.next()){
+               QListWidgetItem * newItem = new QListWidgetItem ;
+               QString Category  = "";
+               Category = query.value(0).toString();
+
+               bool found = false;
+               for (int j = 0; j < ui->listWidget_Kat->count(); ++j) {
+                   if (ui->listWidget_Kat->item(j)->data(Qt::DisplayRole).toString() == Category) {
+                       found = true;
+                       break;
+                   }
+               }
+
+               if (!found){
+                   newItem -> setText(Category);
+                   ui->listWidget_Kat-> insertItem(i , newItem);
+                   i++;
+               }
+           }
+       }
+
+    }else {
+        return;
+    }
+}
+
+void WindowPredpriatia::on_pushButton_ShowModel_clicked()
+{
+    ui->listWidget_Model->clear();
+
+
+    QString SelectedKat = ui->listWidget_Kat->currentIndex().data().toString();
+    //qDebug()<<"SelectedPost = "<<SelectedPost;
+
+    QSqlQuery querySearchPost;
+
+
+    if (SelectedKat != ""){
+       QSqlQuery query;
+
+       int i = 0;
+       if (query.exec("SELECT naimenovanie FROM PostavlyaemoeComplect WHERE kategoria = \'" + SelectedKat +"\'")){
+           while (query.next()){
+               QListWidgetItem * newItem = new QListWidgetItem ;
+               QString Model  = "";
+               Model = query.value(0).toString();
+               newItem -> setText(Model);
+               ui->listWidget_Model-> insertItem(i , newItem);
+               i++;
+           }
+       }
+
+    }else {
+        return;
+    }
+
+    ui->pushButton_AddCount->setEnabled(true);
+}
+
+
+void WindowPredpriatia::on_pushButton_AddCount_clicked()
+{
+    if (ui->spinBox->value() == 0){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не ввели количество комплектующего");
+        msgBox.exec();
+        return;
+    }
+
+    if (ui->listWidget_Model->currentIndex().data().toString() == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не выбрали комплектующее");
+        msgBox.exec();
+        return;
+    }
 
 }

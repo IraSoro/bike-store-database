@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -262,37 +262,7 @@
      <attribute name="title">
       <string>Заказать</string>
      </attribute>
-     <widget class="QListView" name="listView">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>131</width>
-        <height>192</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QListView" name="listView_2">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>10</y>
-        <width>131</width>
-        <height>192</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QListView" name="listView_3">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>10</y>
-        <width>131</width>
-        <height>192</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pushButton_ShowKat">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -305,7 +275,7 @@
        <string>Показать категории</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButton_ShowModel">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -315,7 +285,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Показать комплект.</string>
+       <string>Показать модели</string>
       </property>
      </widget>
      <widget class="QSpinBox" name="spinBox">
@@ -341,7 +311,76 @@
        <string>Количество</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>0</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Выбор поставщика</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_17">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>0</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Выбор модели</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_18">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>0</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Выбор категории</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listWidget_Post">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>131</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listWidget_Kat">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>20</y>
+        <width>131</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listWidget_Model">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>20</y>
+        <width>131</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_AddCount">
       <property name="geometry">
        <rect>
         <x>294</x>
@@ -351,20 +390,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Отложить</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_4">
-      <property name="geometry">
-       <rect>
-        <x>294</x>
-        <y>270</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Оплатить</string>
+       <string>Добавить</string>
       </property>
      </widget>
     </widget>
