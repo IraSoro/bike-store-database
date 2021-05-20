@@ -20,14 +20,20 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
         int i = 0;
         while (query.next()){
             QListWidgetItem * newItem = new QListWidgetItem ;
+            QListWidgetItem * newItem1 = new QListWidgetItem ;
             newItem -> setText(query.value(0).toString());
+            newItem1 -> setText(query.value(0).toString());
             ui->listWidget_Post-> insertItem(i , newItem);
+            ui->listWidget_PostInBasket-> insertItem(i , newItem1);
             i++;
         }
     }
     ui->pushButton_ShowModel->setEnabled(false);
     ui->pushButton_AddCount->setEnabled(false);
     ui->spinBox->setValue(10);
+
+
+    ui->pushButton_Pay->setEnabled(false);
 
 }
 
@@ -149,7 +155,7 @@ void WindowPredpriatia::on_pushButton_ShowModel_clicked()
        QSqlQuery query;
 
        int i = 0;
-       if (query.exec("SELECT naimenovanie FROM PostavlyaemoeComplect WHERE kategoria = \'" + SelectedKat +"\'")){
+       if (query.exec("SELECT naimenovanie FROM PostavlyaemoeComplect WHERE kategoria = \'" + SelectedKat +"\' AND id_postavsika = " + QString::number(IdSelectedPost))){
            while (query.next()){
                QListWidgetItem * newItem = new QListWidgetItem ;
                QString Model  = "";
@@ -183,5 +189,44 @@ void WindowPredpriatia::on_pushButton_AddCount_clicked()
         msgBox.exec();
         return;
     }
+
+
+    QSqlQuery queryPos, queryCompl, queryZakaz;
+
+    queryCompl.exec("SELECT * FROM PostavlyaemoeComplect WHERE naimenovanie = \'" + ui->listWidget_Model->currentIndex().data().toString() + "\'");
+    queryCompl.first();
+
+    QString SelectCompl = queryCompl.value("id_complect").toString();
+    qDebug()<<"------"<<SelectCompl;
+
+    queryPos.exec("SELECT * FROM Postavsik WHERE id_postavsika = " + QString::number(IdSelectedPost));
+    queryPos.first();
+    qDebug()<<"------"<<queryPos.value("id_postavsika").toString();
+
+    QString kodZakaza = "000";
+
+    if (queryZakaz.exec("INSERT INTO Zakaz_complect (id_complect, id_postavsika, kod_zakaza, kod_postavsika, "
+                    "kod_complect, kolichestvo, cena) "
+                    "VALUES (" + SelectCompl+ ", "+ queryPos.value("id_postavsika").toString()+
+                    ",\'"+kodZakaza+ "\', \'" + queryPos.value("kod_postavsika").toString() + "\', \'"+
+                    queryCompl.value("kod_complect").toString() + "\', " + QString::number(ui->spinBox->value()) + ", "+
+                    queryCompl.value("cena").toString() + ")"))
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Комплектующее добавлено в корзину.");
+        msgBox.exec();
+        ui->pushButton_ShowModel->setEnabled(false);
+        ui->pushButton_AddCount->setEnabled(false);
+        ui->listWidget_Model->clear();
+        ui->listWidget_Kat->clear();
+
+    }else {
+        //qDebug()<<"no";
+    }
+}
+
+void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
+{
+
 
 }

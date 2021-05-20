@@ -39,6 +39,8 @@ private slots:
 
     void on_pushButton_AddCount_clicked();
 
+    void on_pushButton_ShowBasket_clicked();
+
 private:
     Ui::WindowPredpriatia *ui;
 
