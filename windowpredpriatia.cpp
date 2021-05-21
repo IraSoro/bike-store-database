@@ -1,4 +1,4 @@
-// TODO: оформить договори при добавлении поставщиков, сделать проверку сроков договоров и при необходимости заключать (продлевать новые), изменить в договорах с поставщиками DateTime на Date
+// TODO: оформить договори при добавлении поставщиков, сделать проверку сроков договоров и при необходимости заключать (продлевать новые)
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -54,13 +54,15 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
 
             int days = Now.daysTo(FinishContract);
 
+            bool prolong = queryContract.value("prodlen").toBool();
+
             qDebug()<<"days = "<<days;
-            if (days < 0){
+            if (days < 0 && prolong == 0){
                 ui->listWidget_Overdue-> insertItem(i , newItemDate);
             }
-            else if (days < 7){
+            else if (days < 7 && prolong == 0){
                 ui->listWidget_Soon-> insertItem(i , newItemDate);
-            }else{
+            }else {
                 ui->listWidget_Good-> insertItem(i , newItemDate);
             }
 
@@ -398,5 +400,123 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
     }
 
     ui->pushButton_Pay->setEnabled(false);
+
+}
+
+void WindowPredpriatia::on_pushButton_5_clicked()  //продление договора
+{
+    QString kodDogovora = ui->listWidget_Soon->currentIndex().data().toString();
+    if (kodDogovora == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не выбрали поставщика");
+        msgBox.exec();
+        return;
+    }
+
+    QSqlQuery queryContractPostAdd, queryContractFinish;
+
+    if (queryContractFinish.exec("SELECT * FROM Dogovor_s_Postavsikom WHERE kod_dogovora = \'" + kodDogovora+"\'")){
+        queryContractFinish.first();
+        qDebug()<<"1 - ok";
+    }
+    QDate NewStartDate = queryContractFinish.value("data_okonchania").toDate().addDays(1);
+    QDate NewFinishDate = NewStartDate.addYears(2);
+
+    qDebug()<<"start = "<<NewStartDate.toString(Qt::ISODate)<<" finish = "<<NewFinishDate.toString(Qt::ISODate);
+
+    QString NewContract = kodDogovora+"-2";
+    if(queryContractPostAdd.exec("INSERT INTO Dogovor_s_Postavsikom "
+               "(id_postavsika, id_predpriatia, kod_dogovora, kod_postavsika,"
+               "kod_predpriatia, data_nachala, data_okonchania) "
+               "VALUES (" + queryContractFinish.value("id_postavsika").toString()+
+               "," + queryContractFinish.value("id_predpriatia").toString()+", \'"+
+               NewContract + "\' , \'" +queryContractFinish.value("kod_postavsika").toString()+ "\', \'"+
+               queryContractFinish.value("kod_predpriatia").toString() + "\', \'"+
+               NewStartDate.toString(Qt::ISODate) + "\' , \'" +  NewFinishDate.toString(Qt::ISODate) + "\' )")){
+        qDebug()<<"2 - ok";
+
+    }
+
+    QSqlQuery queryDoc;
+
+    queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET prodlen = 1 "
+                  "WHERE kod_dogovora = \'" + kodDogovora+"\'");
+
+    QSqlQuery queryCompany;
+
+    if (queryCompany.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + QString::number(IdPred))){
+        queryCompany.first();
+    }
+
+    QSqlQuery queryPos;
+
+    if (queryPos.exec("SELECT * FROM Postavsik WHERE id_postavsika = " + queryContractFinish.value("id_postavsika").toString())){
+        queryPos.first();
+    }
+
+    QString html =
+    "<h1 align=center>"
+    "Договор с поставщиком<br>№ " + NewContract+"</h1>"
+    "<p align=justify>"
+    "Заказчик: предприятие " + queryCompany.value("kod_predpriatia").toString()+"<br>"
+    "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
+    "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
+    "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
+    "Дата начала действия договора: " + NewStartDate.toString(Qt::ISODate)+"<br>"
+    "Дата окончания действия договора: " + NewFinishDate.toString(Qt::ISODate) +"<br>"
+    "</p>"
+    "<div align=right>IS</div>";
+
+    QTextDocument document;
+    document.setHtml(html);
+
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPaperSize(QPrinter::A4);
+    QString temp = NewContract;
+    QString FileName = "C:/Users/User/Desktop/bd/Contract_postavsiki/"+temp+".pdf";
+    qDebug()<<FileName;
+    printer.setOutputFileName(FileName);
+    printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+
+    document.print(&printer);
+
+    QMessageBox msgBox;
+    msgBox.setText("Договор №" +NewContract+" о продлении сохранен.");
+    msgBox.exec();
+
+
+    ui->listWidget_Overdue->clear();
+    ui->listWidget_Soon->clear();
+    ui->listWidget_Good->clear();
+
+    QSqlQuery queryContract;
+    if (queryContract.exec("SELECT * FROM Dogovor_s_Postavsikom")){
+        int i = 0;
+        while (queryContract.next()){
+            QListWidgetItem * newItemDate = new QListWidgetItem ;
+            newItemDate -> setText(queryContract.value("kod_dogovora").toString());
+
+            //QDate StartContract = queryContract.value("data_nachala").toDate();
+            QDate FinishContract = queryContract.value("data_okonchania").toDate();
+            QDate Now = QDate::currentDate();
+
+            int days = Now.daysTo(FinishContract);
+
+            bool prolong = queryContract.value("prodlen").toBool();
+
+            qDebug()<<"days = "<<days;
+            if (days < 0 && prolong == 0){
+                ui->listWidget_Overdue-> insertItem(i , newItemDate);
+            }
+            else if (days < 7 && prolong == 0){
+                ui->listWidget_Soon-> insertItem(i , newItemDate);
+            }else {
+                ui->listWidget_Good-> insertItem(i , newItemDate);
+            }
+
+            i++;
+        }
+    }
 
 }

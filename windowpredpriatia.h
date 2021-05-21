@@ -45,6 +45,8 @@ private slots:
 
     void on_pushButton_Pay_clicked();
 
+    void on_pushButton_5_clicked();
+
 private:
     Ui::WindowPredpriatia *ui;
 
