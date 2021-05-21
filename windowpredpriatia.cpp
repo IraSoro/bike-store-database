@@ -15,18 +15,34 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
     ui->dateEdit_Finish->setDate(QDate::currentDate().addYears(2));
 
 
-    QSqlQuery query;
+    QSqlQuery query, querySearchContract;
 
-    if (query.exec("SELECT nazvanie FROM Postavsik")){
+    if (query.exec("SELECT * FROM Postavsik")){
         int i = 0;
         while (query.next()){
-            QListWidgetItem * newItem = new QListWidgetItem ;
-            QListWidgetItem * newItem1 = new QListWidgetItem ;
-            newItem -> setText(query.value(0).toString());
-            newItem1 -> setText(query.value(0).toString());
-            ui->listWidget_Post-> insertItem(i , newItem);
-            ui->listWidget_PostInBasket-> insertItem(i , newItem1);
-            i++;
+            QSqlQuery querySearchContract;
+            if (querySearchContract.exec("SELECT * FROM Dogovor_s_Postavsikom "
+                                         "WHERE prodlen = 0 AND id_postavsika = "+
+                                         query.value("id_postavsika").toString())){
+
+                querySearchContract.first();
+                QDate Now = QDate::currentDate();
+                QDate FinishDate = querySearchContract.value("data_okonchania").toDate();
+                int days = Now.daysTo(FinishDate);
+
+                if (days > 0){
+                    QString name = query.value("nazvanie").toString();
+                    QListWidgetItem * newItem = new QListWidgetItem ;
+                    QListWidgetItem * newItem1 = new QListWidgetItem ;
+                    newItem -> setText(name);
+                    newItem1 -> setText(name);
+                    ui->listWidget_Post-> insertItem(i , newItem);
+                    ui->listWidget_PostInBasket-> insertItem(i , newItem1);
+                    i++;
+                }
+
+            }
+
         }
     }
     ui->pushButton_ShowModel->setEnabled(false);
@@ -56,7 +72,7 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
 
             bool prolong = queryContract.value("prodlen").toBool();
 
-            qDebug()<<"days = "<<days;
+            //qDebug()<<"days = "<<days;
             if (days < 0 && prolong == 0){
                 ui->listWidget_Overdue-> insertItem(i , newItemDate);
             }
