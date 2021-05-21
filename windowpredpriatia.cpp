@@ -1,4 +1,4 @@
-// TODO: оформить договори при добавлении поставщиков, сделать проверку сроков договоров и при необходимости заключать (продлевать новые везде делать проверку на действующие договора (не забывать про столбец "продлен")
+// TODO: оформить договори при добавлении поставщиков, проверить код поставщика и во всех таблицах (он разный!!!)
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -117,7 +117,7 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
         return;
     }
 
-    QSqlQuery query, queryDoc, queryPos;
+    QSqlQuery query, queryDoc, queryPos, queryPred, queryGet;
 
     if(query.exec("INSERT INTO Postavsik (kod_postavsika, nazvanie, foi_directora_postavsika, foi_glavnogo_buhgaltera_postavsika,"
                "nomer_cheta_postavsika, login_postavsika, parol_postavsika) "
@@ -126,14 +126,56 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
 
     }
 
-    queryPos.exec("SELECT id_postavsika FROM Postavsik WHERE kod_postavsika = \'" + LineEditKod+ "\'");
-    if (queryPos.first())
-        qDebug()<<queryPos.value(0).toString();
+    queryPred.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + QString::number(IdPred));
+    if (queryPred.first()){
+        //qDebug()<<queryPred.value("kod_predpriatia").toString();
+    }
+
+    queryPos.exec("SELECT * FROM Postavsik WHERE kod_postavsika = \'" + LineEditKod+ "\'");
+    if (queryPos.first()){
+        //qDebug()<<queryPos.value(0).toString();
+    }
 
     queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET data_nachala = \'" + DateEditStart.toString(Qt::ISODateWithMs) +
                   "\' , data_okonchania = \'" + DateEditFinish.toString(Qt::ISODateWithMs) + "\'WHERE id_postavsika = "+
-                  queryPos.value(0).toString());
+                  queryPos.value("id_postavsika").toString());
 
+    queryGet.exec("SELECT * FROM Dogovor_s_Postavsikom WHERE id_postavsika = " + queryPos.value("id_postavsika").toString());
+    if (queryGet.first()){
+        //qDebug()<<queryGet.value(0).toString();
+    }
+
+
+    QString html =
+    "<h1 align=center>"
+    "Договор с поставщиком<br>№ " + queryGet.value("kod_dogovora").toString()+"</h1>"
+    "<p align=justify>"
+    "Предприятие: " + queryPred.value("kod_predpriatia").toString()+"<br>"
+    "Директор: " + queryPred.value("fio_directora").toString()+"<br>"
+    "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
+    "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
+    "Дата начала действия договора: " + DateEditStart.toString(Qt::ISODateWithMs)+"<br>"
+    "Дата окончания действия договора: " + DateEditFinish.toString(Qt::ISODateWithMs) +"<br>"
+    "</p>"
+    "<div align=right>IS</div>";
+
+    QTextDocument document;
+    document.setHtml(html);
+
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPaperSize(QPrinter::A4);
+    QString temp = queryGet.value("kod_dogovora").toString();
+    QString FileName = "C:/Users/User/Desktop/bd/Contract_postavsiki/"+temp+".pdf";
+    qDebug()<<FileName;
+    printer.setOutputFileName(FileName);
+    printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+
+    document.print(&printer);
+
+    QMessageBox msgBox;
+    msgBox.setText("Договор № " +queryGet.value("kod_dogovora").toString()+" сохранен.");
+    msgBox.exec();
 
 
 
