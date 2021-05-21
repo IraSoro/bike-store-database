@@ -47,6 +47,8 @@ private slots:
 
     void on_pushButton_5_clicked();
 
+    void on_pushButton_6_clicked();
+
 private:
     Ui::WindowPredpriatia *ui;
 
@@ -55,6 +57,9 @@ private:
     QString IdSelectedPostInBasket = "";
     QString TitleModel = "<br>";
     int sum = 0;
+
+
+    void ConclusionNewContract(QDate start, QDate finish, QString KodDogovora);
 
 };
 

@@ -1,4 +1,4 @@
-// TODO: оформить договори при добавлении поставщиков, сделать проверку сроков договоров и при необходимости заключать (продлевать новые)
+// TODO: оформить договори при добавлении поставщиков, сделать проверку сроков договоров и при необходимости заключать (продлевать новые везде делать проверку на действующие договора (не забывать про столбец "продлен")
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -403,15 +403,8 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
 
 }
 
-void WindowPredpriatia::on_pushButton_5_clicked()  //продление договора
-{
-    QString kodDogovora = ui->listWidget_Soon->currentIndex().data().toString();
-    if (kodDogovora == ""){
-        QMessageBox msgBox;
-        msgBox.setText("Вы ввели не выбрали поставщика");
-        msgBox.exec();
-        return;
-    }
+void WindowPredpriatia::ConclusionNewContract(QDate start, QDate finish, QString Kod){
+    QString kodDogovora = Kod;
 
     QSqlQuery queryContractPostAdd, queryContractFinish;
 
@@ -419,8 +412,8 @@ void WindowPredpriatia::on_pushButton_5_clicked()  //продление дого
         queryContractFinish.first();
         qDebug()<<"1 - ok";
     }
-    QDate NewStartDate = queryContractFinish.value("data_okonchania").toDate().addDays(1);
-    QDate NewFinishDate = NewStartDate.addYears(2);
+    QDate NewStartDate = start;
+    QDate NewFinishDate = finish;
 
     qDebug()<<"start = "<<NewStartDate.toString(Qt::ISODate)<<" finish = "<<NewFinishDate.toString(Qt::ISODate);
 
@@ -482,7 +475,7 @@ void WindowPredpriatia::on_pushButton_5_clicked()  //продление дого
     document.print(&printer);
 
     QMessageBox msgBox;
-    msgBox.setText("Договор №" +NewContract+" о продлении сохранен.");
+    msgBox.setText("Договор № " +NewContract+" о продлении сохранен.");
     msgBox.exec();
 
 
@@ -518,5 +511,45 @@ void WindowPredpriatia::on_pushButton_5_clicked()  //продление дого
             i++;
         }
     }
+
+}
+
+void WindowPredpriatia::on_pushButton_5_clicked()  //продление договора
+{
+
+    QString kodDogovora = ui->listWidget_Soon->currentIndex().data().toString();
+    if (kodDogovora == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не выбрали поставщика");
+        msgBox.exec();
+        return;
+    }
+
+    QSqlQuery queryContractFinish;
+
+    if (queryContractFinish.exec("SELECT * FROM Dogovor_s_Postavsikom WHERE kod_dogovora = \'" + kodDogovora+"\'")){
+        queryContractFinish.first();
+    }
+    QDate NewStartDate = queryContractFinish.value("data_okonchania").toDate().addDays(1);
+    QDate NewFinishDate = NewStartDate.addYears(2);
+
+    ConclusionNewContract(NewStartDate, NewFinishDate, kodDogovora);
+
+}
+
+void WindowPredpriatia::on_pushButton_6_clicked() //просроченные договора, заключить заново
+{
+    QString kodDogovora = ui->listWidget_Overdue->currentIndex().data().toString();
+    if (kodDogovora == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не выбрали поставщика");
+        msgBox.exec();
+        return;
+    }
+
+    QDate NewDateStart = QDate::currentDate().addDays(1);
+    QDate NewDateFinish = NewDateStart.addYears(2);
+
+    ConclusionNewContract(NewDateStart, NewDateFinish, kodDogovora);
 
 }
