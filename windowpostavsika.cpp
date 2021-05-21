@@ -1,6 +1,8 @@
 #include "windowpostavsika.h"
 #include "ui_windowpostavsika.h"
 
+//TODO: проверка поступления новых заказов, выполнение заказов
+
 WindowPostavsika::WindowPostavsika(int idPostavsika, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::WindowPostavsika)

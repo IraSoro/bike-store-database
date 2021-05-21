@@ -1,3 +1,4 @@
+// TODO: оформить договори при добавлении поставщиков, сделать проверку сроков договоров и при необходимости заключать (продлевать новые), изменить в договорах с поставщиками DateTime на Date
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -10,8 +11,8 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
 
     IdPred = idPred;
 
-    ui->dateTimeEdit_Start->setDateTime(QDateTime::currentDateTime());
-    ui->dateTimeEdit_Finish->setDateTime(QDateTime::currentDateTime().addYears(2));
+    ui->dateEdit_Start->setDate(QDate::currentDate());
+    ui->dateEdit_Finish->setDate(QDate::currentDate().addYears(2));
 
 
     QSqlQuery query;
@@ -40,6 +41,34 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
     name_table << "Модель" << "Количество" << "Цена";
     ui->tableWidget->setHorizontalHeaderLabels(name_table);
 
+    QSqlQuery queryContract;
+    if (queryContract.exec("SELECT * FROM Dogovor_s_Postavsikom")){
+        int i = 0;
+        while (queryContract.next()){
+            QListWidgetItem * newItemDate = new QListWidgetItem ;
+            newItemDate -> setText(queryContract.value("kod_dogovora").toString());
+
+            //QDate StartContract = queryContract.value("data_nachala").toDate();
+            QDate FinishContract = queryContract.value("data_okonchania").toDate();
+            QDate Now = QDate::currentDate();
+
+            int days = Now.daysTo(FinishContract);
+
+            qDebug()<<"days = "<<days;
+            if (days < 0){
+                ui->listWidget_Overdue-> insertItem(i , newItemDate);
+            }
+            else if (days < 7){
+                ui->listWidget_Soon-> insertItem(i , newItemDate);
+            }else{
+                ui->listWidget_Good-> insertItem(i , newItemDate);
+            }
+
+            i++;
+        }
+    }
+
+
 }
 
 WindowPredpriatia::~WindowPredpriatia()
@@ -56,10 +85,10 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     QString LineEditChet = ui->lineEdit_Chet->text();
     QString LineEditLogin = ui->lineEdit_Login->text();
     QString LineEditParol = ui->lineEdit_Parol->text();
-    QDateTime DateTimeEditStart = ui->dateTimeEdit_Start->dateTime();
-    QDateTime DateTimeEditFinish = ui->dateTimeEdit_Finish->dateTime();
+    QDate DateEditStart = ui->dateEdit_Start->date();
+    QDate DateEditFinish = ui->dateEdit_Finish->date();
 
-    qDebug()<<"Start = "<<DateTimeEditStart<< "Finish = "<<DateTimeEditFinish;
+    qDebug()<<"Start = "<<DateEditStart<< "Finish = "<<DateEditFinish;
 
 
     if (LineEditName == "" || LineEditKod == "" || LineEditDir == "" || LineEditBuh == "" || LineEditChet == ""
@@ -83,8 +112,8 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     if (queryPos.first())
         qDebug()<<queryPos.value(0).toString();
 
-    queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET data_nachala = \'" + DateTimeEditStart.toString(Qt::ISODateWithMs) +
-                  "\' , data_okonchania = \'" + DateTimeEditFinish.toString(Qt::ISODateWithMs) + "\'WHERE id_postavsika = "+
+    queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET data_nachala = \'" + DateEditStart.toString(Qt::ISODateWithMs) +
+                  "\' , data_okonchania = \'" + DateEditFinish.toString(Qt::ISODateWithMs) + "\'WHERE id_postavsika = "+
                   queryPos.value(0).toString());
 
 
@@ -311,11 +340,11 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
         qDebug()<<"start = "<<StartDate<<"   finish = "<<FinishDate;
         while (queryZakazCompl.next()){
 
-//            if(queryUpdatePay.exec("UPDATE Zakaz_complect SET oplata = 1, kod_zakaza = \'"+kodZakaza+
-//                                "\', data_zakaza = \'"+StartDate+"\', data_dostavki = \'" + FinishDate + "\' "
-//                                   "WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
+            if(queryUpdatePay.exec("UPDATE Zakaz_complect SET oplata = 1, kod_zakaza = \'"+kodZakaza+
+                                "\', data_zakaza = \'"+StartDate+"\', data_dostavki = \'" + FinishDate + "\' "
+                                   "WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
 
-//            }
+            }
         }
 
         QSqlQuery queryCompany;

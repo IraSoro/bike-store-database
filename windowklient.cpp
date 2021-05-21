@@ -1,6 +1,8 @@
 #include "windowklient.h"
 #include "ui_windowklient.h"
 
+// TODO: заказ комплектующих
+
 MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindowKlient)
