@@ -164,17 +164,7 @@
      <attribute name="title">
       <string>Заказы</string>
      </attribute>
-     <widget class="QListView" name="listView">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>31</y>
-        <width>171</width>
-        <height>171</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pushButton_Show">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -200,7 +190,7 @@
        <string>Заказы</string>
       </property>
      </widget>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QTableWidget" name="tableWidget_OrderPost">
       <property name="geometry">
        <rect>
         <x>190</x>
@@ -210,7 +200,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButton_Execute">
       <property name="geometry">
        <rect>
         <x>360</x>
@@ -221,6 +211,16 @@
       </property>
       <property name="text">
        <string>Выполнить</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listWidget_ShowOrder">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>171</width>
+        <height>171</height>
+       </rect>
       </property>
      </widget>
     </widget>

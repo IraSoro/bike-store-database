@@ -1,4 +1,4 @@
-// TODO: оформить договори при добавлении поставщиков, проверить код поставщика и во всех таблицах (он разный!!!)
+// TODO: проверить код поставщика и во всех таблицах (он разный!!!), очистку после каждого совершенного действия
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -177,8 +177,6 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     msgBox.setText("Договор № " +queryGet.value("kod_dogovora").toString()+" сохранен.");
     msgBox.exec();
 
-
-
 //    this->close();
 //    emit firstWindow();
 
@@ -321,6 +319,8 @@ void WindowPredpriatia::on_pushButton_AddCount_clicked()
 
 void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
 {
+    sum = 0;
+
     while (ui->tableWidget->rowCount() > 0){
         ui->tableWidget->removeRow(0);
     }

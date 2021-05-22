@@ -9,6 +9,10 @@
 #include <QTabWidget>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QDate>
+#include <QListWidgetItem>
+#include <QPrinter>
+#include <QTextDocument>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
@@ -32,6 +36,8 @@ private slots:
     void on_pushButton_Add_clicked();
 
     void on_pushButton_Open_clicked();
+
+    void on_pushButton_Show_clicked();
 
 private:
     Ui::WindowPostavsika *ui;
