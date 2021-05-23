@@ -408,7 +408,7 @@ void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
 
 void WindowPredpriatia::on_pushButton_Pay_clicked()
 {
-
+    QString temp = "";
     QSqlQuery queryZakazCompl, queryUpdatePay;
     if (queryZakazCompl.exec("SELECT * FROM Zakaz_complect WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
         QString kodZakaza = "ЗК - " + QDateTime::currentDateTime().toString(Qt::ISODate);
@@ -436,6 +436,14 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
             queryPos.first();
         }
 
+        QSqlQuery queryCompl;
+        QString idCompl = "";
+        if (queryCompl.exec("SELECT * FROM Zakaz_complect WHERE kod_zakaza = \'" + kodZakaza +"\'")){
+            while(queryCompl.next()){
+                idCompl += queryCompl.value("id_zakaza").toString();
+            }
+        }
+
         QString html =
         "<h1 align=center>"
         "Документ об оплате заказа<br>№ " + kodZakaza+"</h1>"
@@ -457,7 +465,7 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
         QPrinter printer(QPrinter::PrinterResolution);
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setPaperSize(QPrinter::A4);
-        QString temp = "Z - 122";
+        temp = "ЗАК - "+idCompl;
         QString FileName = "C:/Users/User/Desktop/bd/Payment_doc_complex_company/"+temp+".pdf";
         qDebug()<<FileName;
         printer.setOutputFileName(FileName);
@@ -467,7 +475,7 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
     }
 
     QMessageBox msgBox;
-    msgBox.setText("Заказ оплачен.\nДокумент об оплате заказа сохранен.");
+    msgBox.setText("Заказ оплачен.\nДокумент об оплате заказа сохранен в " + temp + ".pdf");
     msgBox.exec();
 
     while (ui->tableWidget->rowCount() > 0){
@@ -475,6 +483,7 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
     }
 
     ui->pushButton_Pay->setEnabled(false);
+    ui->lineEdit_Total->clear();
 
 }
 

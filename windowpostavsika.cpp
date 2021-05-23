@@ -182,6 +182,13 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
         queryPos.first();
     }
 
+    QSqlQuery queryComplPay;
+    QString idCompl = "";
+    if (queryComplPay.exec("SELECT * FROM Zakaz_complect WHERE kod_zakaza = \'" + kodOrder +"\'")){
+        while(queryComplPay.next()){
+            idCompl += queryComplPay.value("id_zakaza").toString();
+        }
+    }
 
     QString html =
     "<h1 align=center>"
@@ -204,7 +211,7 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
     QPrinter printer(QPrinter::PrinterResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setPaperSize(QPrinter::A4);
-    QString temp = "Z-Z-122";
+    QString temp = "ОТПРАВКА - " + idCompl;
     QString FileName = "C:/Users/User/Desktop/bd/Payment_doc_complex_company/"+temp+".pdf";
     qDebug()<<FileName;
     printer.setOutputFileName(FileName);
