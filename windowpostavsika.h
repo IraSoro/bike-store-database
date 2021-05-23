@@ -41,6 +41,8 @@ private slots:
 
     void on_pushButton_Execute_clicked();
 
+    void on_action_triggered();
+
 private:
     Ui::WindowPostavsika *ui;
 

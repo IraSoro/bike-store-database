@@ -11,9 +11,26 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
 
     IdPred = idPred;
 
+    UpdateForm();
+}
+
+WindowPredpriatia::~WindowPredpriatia()
+{
+    delete ui;
+}
+
+
+void WindowPredpriatia::UpdateForm(){
     ui->dateEdit_Start->setDate(QDate::currentDate());
     ui->dateEdit_Finish->setDate(QDate::currentDate().addYears(2));
 
+    ui->listWidget_Kat->clear();
+    ui->listWidget_Model->clear();
+    ui->listWidget_Good->clear();
+    ui->listWidget_Post->clear();
+    ui->listWidget_Soon->clear();
+    ui->listWidget_Overdue->clear();
+    ui->listWidget_PostInBasket->clear();
 
     QSqlQuery query, querySearchContract;
 
@@ -85,13 +102,6 @@ WindowPredpriatia::WindowPredpriatia(int idPred, QWidget *parent) :
             i++;
         }
     }
-
-
-}
-
-WindowPredpriatia::~WindowPredpriatia()
-{
-    delete ui;
 }
 
 void WindowPredpriatia::on_pushButton_add_post_clicked()
@@ -177,8 +187,15 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     msgBox.setText("Договор № " +queryGet.value("kod_dogovora").toString()+" сохранен.");
     msgBox.exec();
 
-//    this->close();
-//    emit firstWindow();
+    ui->lineEdit_NamePos->clear();
+    ui->lineEdit_KodPos->clear();
+    ui->lineEdit_FIO_Dir->clear();
+    ui->lineEdit_FIO_B->clear();
+    ui->lineEdit_Chet->clear();
+    ui->lineEdit_Login->clear();
+    ui->lineEdit_Parol->clear();
+
+    UpdateForm();
 
 }
 
@@ -610,4 +627,10 @@ void WindowPredpriatia::on_pushButton_6_clicked() //просроченные д�
 
     ConclusionNewContract(NewDateStart, NewDateFinish, kodDogovora);
 
+}
+
+void WindowPredpriatia::on_action_triggered()
+{
+    this->close();
+    emit firstWindow();
 }

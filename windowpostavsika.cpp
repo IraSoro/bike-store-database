@@ -254,3 +254,9 @@ void WindowPostavsika::UpdateForm(){
 
     ui->pushButton_Execute->setEnabled(false);
 }
+
+void WindowPostavsika::on_action_triggered()
+{
+    this->close();
+    emit firstWindow();
+}

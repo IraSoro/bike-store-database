@@ -49,6 +49,8 @@ private slots:
 
     void on_pushButton_6_clicked();
 
+    void on_action_triggered();
+
 private:
     Ui::WindowPredpriatia *ui;
 
@@ -60,6 +62,7 @@ private:
 
 
     void ConclusionNewContract(QDate start, QDate finish, QString KodDogovora);
+    void UpdateForm();
 
 };
 

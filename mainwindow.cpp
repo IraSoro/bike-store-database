@@ -64,6 +64,8 @@ void MainWindow::on_pushButton_clicked() //вход клиента
             msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные или воспользуйтесь регистрацией.");
             msgBox.exec();
         }
+        ui->lineEdit->clear();
+        ui->lineEdit_2->clear();
     } else {
         //qDebug() << query.lastError().text() << " " << query.lastError().number();
     }
@@ -116,6 +118,8 @@ void MainWindow::on_pushButton_3_clicked() //вход поставщика
             msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные.");
             msgBox.exec();
         }
+        ui->lineEdit_3->clear();
+        ui->lineEdit_4->clear();
     } else {
         //qDebug() << query.lastError().text() << " " << query.lastError().number();
     }
@@ -158,5 +162,7 @@ void MainWindow::on_pushButton_Pred_clicked()
             msgBox.setText("Введенные данные неверные.\nПроверьте введенные данные.");
             msgBox.exec();
         }
+        ui->lineEdit_KodPred->clear();
+        ui->lineEdit_ParolPred->clear();
     }
 }

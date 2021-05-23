@@ -72,3 +72,9 @@ void MainWindowKlient::on_pushButton_2_clicked() //заказать
     Bike->show();
     this->close();
 }
+
+void MainWindowKlient::on_action_triggered()
+{
+    this->close();
+    emit firstWindow();
+}
