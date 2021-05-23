@@ -85,8 +85,8 @@ void MainWindow::on_pushButton_3_clicked() //вход поставщика
     QString LineEditLogin = ui->lineEdit_3->text();
     QString LineEditParol = ui->lineEdit_4->text();
 
-//    LineEditLogin = "222";
-//    LineEditParol = "222";
+//    LineEditLogin = "111";
+//    LineEditParol = "111";
 
     if (LineEditLogin == "" || LineEditParol == ""){
         QMessageBox msgBox;

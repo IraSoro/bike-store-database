@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QLabel>
+#include <QListWidgetItem>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
@@ -34,6 +35,10 @@ private slots:
 
     void on_action_triggered();
 
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_Price_clicked();
+
 private:
     Ui::MainWindowKlient *ui;
 
@@ -42,6 +47,7 @@ private:
     QString SelectedBike;
     int IdKlienta = 0;
     int IdBike = 0;
+    int sum = 0;
 };
 
 #endif // MAINWINDOWKLIENT_H
