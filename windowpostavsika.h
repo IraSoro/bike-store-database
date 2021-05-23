@@ -39,11 +39,17 @@ private slots:
 
     void on_pushButton_Show_clicked();
 
+    void on_pushButton_Execute_clicked();
+
 private:
     Ui::WindowPostavsika *ui;
 
     QString FileName = "";
     int IdPostavsika = 0;
+    int IdPred = 1;
+    int row = 0;
+
+    void UpdateForm();
 };
 
 #endif // WINDOWPOSTAVSIKA_H
