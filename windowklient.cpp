@@ -1,7 +1,7 @@
 #include "windowklient.h"
 #include "ui_windowklient.h"
 
-// TODO: заказ комплектующих
+// TODO: информация об статусе заказов
 
 MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     QMainWindow(parent),

@@ -283,7 +283,7 @@ void WindowPredpriatia::on_pushButton_ShowModel_clicked()
 }
 
 
-void WindowPredpriatia::on_pushButton_AddCount_clicked()
+void WindowPredpriatia::on_pushButton_AddCount_clicked()  //добавить в корзину
 {
     if (ui->spinBox->value() == 0){
         QMessageBox msgBox;
@@ -312,12 +312,12 @@ void WindowPredpriatia::on_pushButton_AddCount_clicked()
     queryPos.first();
     qDebug()<<"------"<<queryPos.value("id_postavsika").toString();
 
-    QString kodZakaza = "000";
+    QString kodZakaza = "0";
 
-    if (queryZakaz.exec("INSERT INTO Zakaz_complect (id_complect, id_postavsika, kod_zakaza, kod_postavsika, "
+    if (queryZakaz.exec("INSERT INTO Zakaz_complect (id_complect, id_postavsika, id_zakaza, kod_zakaza, kod_postavsika, "
                     "kod_complect, kolichestvo, cena) "
                     "VALUES (" + SelectCompl+ ", "+ queryPos.value("id_postavsika").toString()+
-                    ",\'"+kodZakaza+ "\', \'" + queryPos.value("kod_postavsika").toString() + "\', \'"+
+                    ", 0, \'"+kodZakaza+ "\', \'" + queryPos.value("kod_postavsika").toString() + "\', \'"+
                     queryCompl.value("kod_complect").toString() + "\', " + QString::number(ui->spinBox->value()) + ", "+
                     queryCompl.value("cena").toString() + ")"))
     {
@@ -367,7 +367,7 @@ void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
 
     QString NameModel = "";
     QSqlQuery queryZakazCompl;
-    if (queryZakazCompl.exec("SELECT * FROM Zakaz_complect WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
+    if (queryZakazCompl.exec("SELECT * FROM Zakaz_complect WHERE id_zakaza = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
 
         ui->tableWidget->setColumnCount(3);
         QStringList name_table;
@@ -392,7 +392,7 @@ void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
             ui->tableWidget->setItem(i,0,itm);
             QTableWidgetItem *itm1 = new QTableWidgetItem(queryZakazCompl.value("kolichestvo").toString());
             ui->tableWidget->setItem(i,1,itm1);
-            sum += queryZakazCompl.value("cena").toInt();
+            sum += queryZakazCompl.value("cena").toInt()*queryZakazCompl.value("kolichestvo").toInt();
             QTableWidgetItem *itm2 = new QTableWidgetItem(queryZakazCompl.value("cena").toString());
             ui->tableWidget->setItem(i,2,itm2);
             ui->tableWidget->update();
@@ -409,20 +409,43 @@ void WindowPredpriatia::on_pushButton_ShowBasket_clicked()
 void WindowPredpriatia::on_pushButton_Pay_clicked()
 {
     QString temp = "";
+    double sumTax = 0;
     QSqlQuery queryZakazCompl, queryUpdatePay;
-    if (queryZakazCompl.exec("SELECT * FROM Zakaz_complect WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
+    if (queryZakazCompl.exec("SELECT * FROM Zakaz_complect WHERE id_zakaza = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
         QString kodZakaza = "ЗК - " + QDateTime::currentDateTime().toString(Qt::ISODate);
         QString StartDate = QDate::currentDate().toString(Qt::ISODate);
         QString FinishDate = QDate::currentDate().addDays(30).toString(Qt::ISODate);
         qDebug()<<"start = "<<StartDate<<"   finish = "<<FinishDate;
-        while (queryZakazCompl.next()){
 
-            if(queryUpdatePay.exec("UPDATE Zakaz_complect SET oplata = 1, kod_zakaza = \'"+kodZakaza+
-                                "\', data_zakaza = \'"+StartDate+"\', data_dostavki = \'" + FinishDate + "\' "
-                                   "WHERE oplata = 0 AND id_postavsika = " + IdSelectedPostInBasket)){
+        if(queryUpdatePay.exec("INSERT INTO Zakaz_postavsiku (oplachen, kod_zakaza, data_zakaza, data_dostavki, summa)"
+                               "VALUES (1, \'" + kodZakaza + "\', \'" + StartDate + "\' , \'" + FinishDate + "\', " + QString::number(sum) + ")")){
+
+        }
+//        QString IdOrder = "";
+        while (queryZakazCompl.next()){
+//            QSqlQuery queryGetIdOrder;
+//            if (queryGetIdOrder.exec("SELECT max(id_zakaza) FROM Zakaz_postavsiku")){
+//                IdOrder = queryGetIdOrder.value("max(id_zakaza)").toString();
+//                qDebug()<<"order = "<<IdOrder;
+//            }
+
+
+            QSqlQuery queryAddIdOrder;
+            if (queryAddIdOrder.exec("UPDATE Zakaz_complect SET id_zakaza = (SELECT max(id_zakaza) FROM Zakaz_postavsiku), "
+                                     "kod_zakaza = \'" + kodZakaza + "\' "
+                                     "WHERE id_complect_v_zakaze = " + queryZakazCompl.value("id_complect_v_zakaze").toString())){
+
+            }
+
+            sumTax = 1.2 * sum;
+            QSqlQuery querySchetPost;
+            if(querySchetPost.exec("INSERT INTO Schet_postavsika (id_postavsika, summa_s_nds, id_zakaza )"
+                                   "VALUES ( " + IdSelectedPostInBasket + ", " + QString::number(sumTax) + ", (SELECT max(id_zakaza) FROM Zakaz_postavsiku))")){
 
             }
         }
+
+
 
         QSqlQuery queryCompany;
 
@@ -438,45 +461,80 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
 
         QSqlQuery queryCompl;
         QString idCompl = "";
-        if (queryCompl.exec("SELECT * FROM Zakaz_complect WHERE kod_zakaza = \'" + kodZakaza +"\'")){
+        if (queryCompl.exec("SELECT * FROM Zakaz_postavsiku WHERE kod_zakaza = \'" + kodZakaza +"\'")){
             while(queryCompl.next()){
                 idCompl += queryCompl.value("id_zakaza").toString();
             }
         }
 
-        QString html =
+        QString score =
         "<h1 align=center>"
-        "Документ об оплате заказа<br>№ " + kodZakaza+"</h1>"
+        "Счет об оплате заказа<br>№ " + kodZakaza+"</h1>"
         "<p align=justify>"
-        "Заказчик: предприятие" + queryCompany.value("kod_predpriatia").toString()+"<br>"
+        "Заказчик: предприятие " + queryCompany.value("kod_predpriatia").toString()+"<br>"
         "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
         "Заказываемые модели: " + TitleModel+"<br>"
         "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
         "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
         "Дата оформления заказа: " + StartDate+"<br>"
         "Дата доставки: " + FinishDate+"<br>"
-        "Оплачено: " + QString::number(sum)+" рублей <br>"
+        "Сумма заказа: " + QString::number(sum)+" рублей <br>"
+        "Итог (с учетом НДС): " + QString::number(sumTax)+" рублей <br>"
+        "Заказ оплачен<br>"
         "</p>"
         "<div align=right>IS</div>";
 
         QTextDocument document;
-        document.setHtml(html);
+        document.setHtml(score);
 
         QPrinter printer(QPrinter::PrinterResolution);
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setPaperSize(QPrinter::A4);
-        temp = "ЗАК - "+idCompl;
-        QString FileName = "C:/Users/User/Desktop/bd/Payment_doc_complex_company/"+temp+".pdf";
+        temp = "СЧЕТ - ПР - "+idCompl;
+        QString FileName = "C:/Users/User/Desktop/bd/Company_score/"+temp+".pdf";
         qDebug()<<FileName;
         printer.setOutputFileName(FileName);
         printer.setPageMargins(QMarginsF(15, 15, 15, 15));
 
         document.print(&printer);
+
+        QMessageBox msgBox;
+        msgBox.setText("Заказ оплачен.\nСчет об оплате заказа сохранен в " + temp + ".pdf");
+        msgBox.exec();
+
+
+
+        QString html =
+        "<h1 align=center>"
+        "Документ об оплате заказа<br>№ " + kodZakaza+"</h1>"
+        "<p align=justify>"
+        "Заказчик: предприятие " + queryCompany.value("kod_predpriatia").toString()+"<br>"
+        "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
+        "Заказываемые модели: " + TitleModel+"<br>"
+        "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
+        "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
+        "Дата оформления заказа: " + StartDate+"<br>"
+        "Дата доставки: " + FinishDate+"<br>"
+        "Оплачено: " + QString::number(sumTax)+" рублей <br>"
+        "</p>"
+        "<div align=right>IS</div>";
+
+        QTextDocument document1;
+        document1.setHtml(html);
+
+        QPrinter printer1(QPrinter::PrinterResolution);
+        printer1.setOutputFormat(QPrinter::PdfFormat);
+        printer1.setPaperSize(QPrinter::A4);
+        temp = "ЗАК - "+idCompl;
+        QString FileName1 = "C:/Users/User/Desktop/bd/Payment_doc_complex_company/"+temp+".pdf";
+        printer1.setOutputFileName(FileName1);
+        printer1.setPageMargins(QMarginsF(15, 15, 15, 15));
+
+        document1.print(&printer1);
+
     }
 
-    QMessageBox msgBox;
-    msgBox.setText("Заказ оплачен.\nДокумент об оплате заказа сохранен в " + temp + ".pdf");
-    msgBox.exec();
+
 
     while (ui->tableWidget->rowCount() > 0){
         ui->tableWidget->removeRow(0);

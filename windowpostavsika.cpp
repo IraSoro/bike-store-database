@@ -1,7 +1,7 @@
 #include "windowpostavsika.h"
 #include "ui_windowpostavsika.h"
 
-//TODO: после продлени договоров обновить списки поставщиков
+//TODO: после продлени договоров обновить списки поставщиков, изменить событие после нажатия по списку
 
 WindowPostavsika::WindowPostavsika(int idPostavsika, QWidget *parent) :
     QMainWindow(parent),
