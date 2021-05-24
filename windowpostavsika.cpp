@@ -88,7 +88,7 @@ void WindowPostavsika::on_pushButton_Show_clicked() //показать зака�
 
     QSqlQuery queryOrder;
 
-    if (queryOrder.exec("SELECT * FROM Zakaz_complect WHERE oplata = 1 AND prinat = 0 AND kod_zakaza = \'" +kodOrder+"\'")){
+    if (queryOrder.exec("SELECT * FROM Zakaz_complect WHERE kod_zakaza = \'" +kodOrder+"\'")){
         ui->tableWidget_OrderPost->setColumnCount(3);
         QStringList name_table;
         name_table << "Категория" << "Комплектующее" << "Количество";
@@ -132,11 +132,20 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
     QString TitleModel = "<br>";
     QString DateOrder, DateDelivery;
 
-    if (queryOrder.exec("SELECT * FROM Zakaz_complect WHERE oplata = 1 AND prinat = 0 AND kod_zakaza = \'" +kodOrder+"\'")){
+    QSqlQuery queryGetDate;
+    if (queryGetDate.exec("SELECT * FROM Zakaz_postavsiku WHERE kod_zakaza = \'" +kodOrder+"\'")){
+        if (queryGetDate.first()){
+            DateOrder = queryGetDate.value("data_zakaza").toString();
+            DateDelivery = queryGetDate.value("data_dostavki").toString();
+        }
+    }
 
-        while (queryOrder.next()){
-            DateOrder = queryOrder.value("data_zakaza").toString();
-            DateDelivery = queryOrder.value("data_dostavki").toString();
+
+
+    if (queryOrder.exec("SELECT * FROM Zakaz_complect WHERE kod_zakaza = \'" +kodOrder+"\'")){
+
+        while (queryOrder.next()){            
+
             if (queryCompl.exec("SELECT * FROM PostavlyaemoeComplect WHERE kod_complect = \'" + queryOrder.value("kod_complect").toString()+"\'")){
                 queryCompl.first();
                 if (queryWarehouse.exec("SELECT * FROM Sklad_Complect")){
@@ -163,7 +172,7 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
                         }
                     }
                     QSqlQuery queryUpdateOrder;
-                    queryUpdateOrder.exec("UPDATE Zakaz_complect SET prinat = 1 WHERE kod_zakaza = \'" +kodOrder+"\' AND kod_complect = \'" + queryCompl.value("kod_complect").toString()+ "\'");
+                    queryUpdateOrder.exec("UPDATE Zakaz_postavsiku SET prinat = 1 WHERE kod_zakaza = \'" +kodOrder+"\' ");
 
                 }
             }
@@ -184,7 +193,7 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
 
     QSqlQuery queryComplPay;
     QString idCompl = "";
-    if (queryComplPay.exec("SELECT * FROM Zakaz_complect WHERE kod_zakaza = \'" + kodOrder +"\'")){
+    if (queryComplPay.exec("SELECT * FROM Zakaz_postavsiku WHERE kod_zakaza = \'" + kodOrder +"\'")){
         while(queryComplPay.next()){
             idCompl += queryComplPay.value("id_zakaza").toString();
         }
@@ -194,7 +203,7 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
     "<h1 align=center>"
     "Документ на поставку заказа<br>№ " + kodOrder+"</h1>"
     "<p align=justify>"
-    "Заказчик: предприятие" + queryCompany.value("kod_predpriatia").toString()+"<br>"
+    "Заказчик: предприятие " + queryCompany.value("kod_predpriatia").toString()+"<br>"
     "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
     "Заказываемые модели: " + TitleModel+"<br>"
     "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
@@ -233,29 +242,34 @@ void WindowPostavsika::on_pushButton_Execute_clicked()
 }
 
 void WindowPostavsika::UpdateForm(){
-    QSqlQuery queryOrder;
+    QSqlQuery queryOrder, queryOrderAll;
 
     int i = 0;
-    if (queryOrder.exec("SELECT * FROM Zakaz_complect WHERE oplata = 1 AND prinat = 0 AND id_postavsika = " + QString::number(IdPostavsika))){
+    if (queryOrder.exec("SELECT * FROM Zakaz_postavsiku WHERE oplachen = 1 AND prinat = 0 ")){
         while (queryOrder.next()){
-            QString name = queryOrder.value("kod_zakaza").toString();
-            QListWidgetItem * newItem = new QListWidgetItem ;
+            if (queryOrderAll.exec("SELECT * FROM Zakaz_complect WHERE id_postavsika = " + QString::number(IdPostavsika) + " AND kod_zakaza = \'" + queryOrder.value("kod_zakaza").toString() + "\'")){
+                if (queryOrderAll.first()){
+                    QString name = queryOrder.value("kod_zakaza").toString();
+                    QListWidgetItem * newItem = new QListWidgetItem ;
 
-            bool found = false;
-            for (int j = 0; j < ui->listWidget_ShowOrder->count(); ++j) {
-                if (ui->listWidget_ShowOrder->item(j)->data(Qt::DisplayRole).toString() == name) {
-                    found = true;
-                    break;
+                    bool found = false;
+                    for (int j = 0; j < ui->listWidget_ShowOrder->count(); ++j) {
+                        if (ui->listWidget_ShowOrder->item(j)->data(Qt::DisplayRole).toString() == name) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found){
+                        newItem -> setText(name);
+                        ui->listWidget_ShowOrder-> insertItem(i , newItem);
+                        i++;
+                    }
+
+                    i++;
+
                 }
             }
-
-            if (!found){
-                newItem -> setText(name);
-                ui->listWidget_ShowOrder-> insertItem(i , newItem);
-                i++;
-            }
-
-            i++;
         }
     }
 
