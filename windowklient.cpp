@@ -129,10 +129,118 @@ void MainWindowKlient::on_action_triggered()
     emit firstWindow();
 }
 
-void MainWindowKlient::on_pushButton_3_clicked()
+void MainWindowKlient::on_pushButton_3_clicked() //заказать
 {
+    QVector <QString> View;
+    QString Privod = ui->listWidget_Privod->currentIndex().data().toString();
+    View.push_back(Privod);
+    QString Upravl = ui->listWidget_Upravl->currentIndex().data().toString();
+    View.push_back(Upravl);
+    QString Pedal = ui->listWidget_Pedal->currentIndex().data().toString();
+    View.push_back(Pedal);
+    QString Tormoz = ui->listWidget_Tormoz->currentIndex().data().toString();
+    View.push_back(Tormoz);
+    QString Kolesa = ui->listWidget_Kolesa->currentIndex().data().toString();
+    View.push_back(Kolesa);
+    QString Rezina = ui->listWidget_Rezina->currentIndex().data().toString();
+    View.push_back(Rezina);
+    QString Tros = ui->listWidget_Tros->currentIndex().data().toString();
+    View.push_back(Tros);
+    QString Ramki = ui->listWidget_Ramki->currentIndex().data().toString();
+    View.push_back(Ramki);
+
+    QString CodeOrder = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString DateOrder = QDate::currentDate().toString(Qt::ISODateWithMs);
+    QString DateBuilding = QDate::currentDate().addDays(20).toString(Qt::ISODateWithMs);
+    QString DateDelivery = QDate::currentDate().addDays(30).toString(Qt::ISODateWithMs);
+    QString IdBuildingBike = "";
+
+    QString CodeBike = "";
+
+    QSqlQuery queryBuildBike, queryCodeBike, queryOrderBuildingBike, queryGetCompl;
+    if (queryBuildBike.exec("INSERT INTO Velosiped_sborka DEFAULT VALUES ")){
+        if (queryCodeBike.exec("SELECT * FROM Velosiped_sborka WHERE id_velosipeda=(SELECT max(id_velosipeda) FROM Velosiped_sborka)")){
+            queryCodeBike.first();
+            CodeBike = queryCodeBike.value("kod_velosipeda").toString();
+            IdBuildingBike = queryCodeBike.value("id_velosipeda").toString();
+            for (int i = 0; i < View.size(); i++){
+                if (queryGetCompl.exec("SELECT * FROM Sklad_Complect WHERE naimenovanie = \'" + View[i] + "\'")){
+                    queryGetCompl.first();
+                    QString IdCompl = queryGetCompl.value("id_complect").toString();
+                    QString KodCompl = queryGetCompl.value("kod_complect").toString();
+                    if (queryOrderBuildingBike.exec("INSERT INTO Velosiped_po_zakazu (id_klient, id_complect, id_velosipeda, "
+                                                    "kod_zakaza, kod_velosipeda, kod_complect, cena, data_zakaza, "
+                                                    "data_izgotov, data_dostavki) "
+                                                    "VALUES (" + QString::number(IdKlienta) + ", " + IdCompl + ", " +
+                                                    IdBuildingBike + ", \'" +
+                                                    CodeOrder + "\', \'" + CodeBike + "\', \'" + KodCompl+
+                                                    "\', " + QString::number(sum) + ", \'" + DateOrder +
+                                                    "\' , \'" + DateBuilding+ "\' , \'" + DateDelivery + "\')")){
 
 
+
+                    }
+                }
+            }
+        }
+    }
+
+
+    QSqlQuery queryCompany;
+
+    if (queryCompany.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + IdPred)){
+        queryCompany.first();
+    }
+
+    QSqlQuery queryClient;
+
+    if (queryClient.exec("SELECT * FROM Klient WHERE id_klienta = " + QString::number(IdKlienta))){
+        queryClient.first();
+    }
+
+    QString html =
+    "<h1 align=center>"
+    "Документ на изготовление и доставку велосипеда<br>№ " + CodeOrder+"</h1>"
+    "<p align=justify>"
+    "Предприятие: " + queryCompany.value("kod_predpriatia").toString()+"<br>"
+    "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
+    "Заказчик: " + queryClient.value("fio_klienta").toString()+"<br>"
+    "Код заказываемого велосипеда: " + CodeBike+"<br>"
+    "Составляющие велосипеда: <br>";
+
+    for (int i = 0; i < View.size(); i++){
+        html += View[i];
+        html += "<br>";
+    }
+
+    html += "Дата оформления заказа: " + DateOrder+"<br>"
+    "Дата изготовления: " + DateBuilding+"<br>"
+    "Дата доставки: " + DateDelivery+"<br>"
+    "Сумма заказа: " + QString::number(sum) + "<br>"
+    "Заказ оплачен.<br>"
+    "</p>"
+    "<div align=right>IS</div>";
+
+    QTextDocument document;
+    document.setHtml(html);
+
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setPaperSize(QPrinter::A4);
+    QString temp = "СБ - ВЕЛ - " + IdBuildingBike;
+    QString FileName = "C:/Users/User/Desktop/bd/Client_orders/"+temp+".pdf";
+    qDebug()<<FileName;
+    printer.setOutputFileName(FileName);
+    printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+
+    document.print(&printer);
+
+    QMessageBox msgBox;
+    msgBox.setText("Заказ оплачен.\nДокумент сохранен в "+temp+".pdf");
+    msgBox.exec();
+
+    ui->pushButton_3->setEnabled(false);
+    ui->lineEdit_Price->clear();
 
 }
 

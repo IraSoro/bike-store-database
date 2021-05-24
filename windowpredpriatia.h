@@ -51,6 +51,8 @@ private slots:
 
     void on_action_triggered();
 
+    void on_listWidget_Post_itemDoubleClicked(QListWidgetItem *item);
+
 private:
     Ui::WindowPredpriatia *ui;
 

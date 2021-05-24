@@ -643,3 +643,8 @@ void WindowPredpriatia::on_action_triggered()
     this->close();
     emit firstWindow();
 }
+
+void WindowPredpriatia::on_listWidget_Post_itemDoubleClicked(QListWidgetItem *item)
+{
+    qDebug()<<"12345678";
+}

@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QListWidgetItem>
+#include <QDateTime>
+#include <QDate>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
@@ -45,6 +47,7 @@ private:
     ZakazVelosipeda *Bike;
 
     QString SelectedBike;
+    QString IdPred = "1";
     int IdKlienta = 0;
     int IdBike = 0;
     int sum = 0;
