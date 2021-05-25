@@ -48,6 +48,7 @@ private slots:
     void on_pushButton_Price_clicked();
 
     void UpdateBasket();
+    void UpdateStatusOrder();
 
     void on_pushButton_PayBasket_clicked();
 

@@ -77,11 +77,49 @@ MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     ui->pushButton_3->setEnabled(false);
 
     UpdateBasket();
+    UpdateStatusOrder();
 }
 
 MainWindowKlient::~MainWindowKlient()
 {
     delete ui;
+}
+
+void MainWindowKlient::UpdateStatusOrder(){
+    QDate Now = QDate::currentDate();
+
+    //QString DateBuilding = QDate::currentDate().addDays(20).toString(Qt::ISODateWithMs);
+    //QString DateDelivery = QDate::currentDate().addDays(30).toString(Qt::ISODateWithMs);
+
+    QSqlQuery queryGetOrder;
+
+    int made = 0, way = 0, deliv = 0;
+
+    if (queryGetOrder.exec("SELECT * FROM Korzina_vseh_velosipedov WHERE id_klienta = " + QString::number(IdKlienta))){
+        while (queryGetOrder.next()){
+            QDate DateMade = queryGetOrder.value("data_izgotov").toDate();
+            QDate DateDelivery = queryGetOrder.value("data_dostavki").toDate();
+            int dayMade = Now.daysTo(DateMade);
+            int dayDelivery = Now.daysTo(DateDelivery);
+
+            QString title = queryGetOrder.value("kod_vsego_zakaza").toString();
+            QListWidgetItem * newItem = new QListWidgetItem ;
+            newItem -> setText(title);
+
+            if (dayMade > 0 && dayDelivery > 0){
+                ui->listWidget_Made-> insertItem(made , newItem);
+                made++;
+            }else if (dayMade <= 0 && dayDelivery > 0){
+                ui->listWidget_OnWay -> insertItem(way , newItem);
+                way++;
+            } else{
+                ui->listWidget_Delivery-> insertItem(deliv , newItem);
+                deliv++;
+            }
+        }
+
+    }
+
 }
 
 void MainWindowKlient::on_pushButton_clicked()  //показать
@@ -212,63 +250,6 @@ void MainWindowKlient::on_pushButton_3_clicked() //заказать
     }
 
     UpdateBasket();
-
-
-//    QSqlQuery queryCompany;
-
-//    if (queryCompany.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + IdPred)){
-//        queryCompany.first();
-//    }
-
-//    QSqlQuery queryClient;
-
-//    if (queryClient.exec("SELECT * FROM Klient WHERE id_klienta = " + QString::number(IdKlienta))){
-//        queryClient.first();
-//    }
-
-//    QString html =
-//    "<h1 align=center>"
-//    "Документ на изготовление и доставку велосипеда<br>№ " + CodeOrder+"</h1>"
-//    "<p align=justify>"
-//    "Предприятие: " + queryCompany.value("kod_predpriatia").toString()+"<br>"
-//    "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
-//    "Заказчик: " + queryClient.value("fio_klienta").toString()+"<br>"
-//    "Код заказываемого велосипеда: " + CodeBike+"<br>"
-//    "Составляющие велосипеда: <br>";
-
-//    for (int i = 0; i < View.size(); i++){
-//        html += View[i];
-//        html += "<br>";
-//    }
-
-//    html += "Дата оформления заказа: " + DateOrder+"<br>"
-//    "Дата изготовления: " + DateBuilding+"<br>"
-//    "Дата доставки: " + DateDelivery+"<br>"
-//    "Сумма заказа: " + QString::number(sum) + "<br>"
-//    "Заказ оплачен.<br>"
-//    "</p>"
-//    "<div align=right>IS</div>";
-
-//    QTextDocument document;
-//    document.setHtml(html);
-
-//    QPrinter printer(QPrinter::PrinterResolution);
-//    printer.setOutputFormat(QPrinter::PdfFormat);
-//    printer.setPaperSize(QPrinter::A4);
-//    QString temp = "СБ - ВЕЛ - " + IdBuildingBike;
-//    QString FileName = "C:/Users/User/Desktop/bd/Client_orders/"+temp+".pdf";
-//    qDebug()<<FileName;
-//    printer.setOutputFileName(FileName);
-//    printer.setPageMargins(QMarginsF(15, 15, 15, 15));
-
-//    document.print(&printer);
-
-//    QMessageBox msgBox;
-//    msgBox.setText("Заказ оплачен.\nДокумент сохранен в "+temp+".pdf");
-//    msgBox.exec();
-
-//    ui->pushButton_3->setEnabled(false);
-//    ui->lineEdit_Price->clear();
 
 }
 
@@ -507,6 +488,8 @@ void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить з�
         msgBox.setText("Заказ оплачен.\nДокумент сохранен в "+temp+".pdf");
         msgBox.exec();
 
-
+        UpdateBasket();
 
 }
+
+
