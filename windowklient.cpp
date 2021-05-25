@@ -274,6 +274,8 @@ void MainWindowKlient::on_pushButton_3_clicked() //заказать
 
 void MainWindowKlient::UpdateBasket(){
 
+    Products.clear();
+
     TotalPrice = 0;
 
     while (ui->tableWidget_SimpleBike->rowCount() > 0){
@@ -304,6 +306,13 @@ void MainWindowKlient::UpdateBasket(){
             TotalPrice += querySimpleBike.value("cena").toDouble();
             QTableWidgetItem *itm2 = new QTableWidgetItem(querySimpleBike.value("cena").toString());
             ui->tableWidget_SimpleBike->setItem(i,2,itm2);
+
+            Product temp;
+            temp.TitleModel = querySimpleBike.value("kod_velosipeda").toString();
+            temp.count = querySimpleBike.value("kolichestvo_v_zakaze").toString();
+            temp.price = querySimpleBike.value("cena").toString();
+            Products.push_back(temp);
+
             ui->tableWidget_SimpleBike->update();
             i++;
 
@@ -330,6 +339,13 @@ void MainWindowKlient::UpdateBasket(){
             TotalPrice += queryBuildingBike.value("cena_vsego").toDouble();
             QTableWidgetItem *itm2 = new QTableWidgetItem(queryBuildingBike.value("cena_vsego").toString());
             ui->tableWidget_BuildingBike->setItem(i,2,itm2);
+
+            Product temp;
+            temp.TitleModel = queryBuildingBike.value("kod_velosipeda").toString();
+            temp.count = queryBuildingBike.value("kolichestvo").toString();
+            temp.price = queryBuildingBike.value("cena_vsego").toString();
+            Products.push_back(temp);
+
             ui->tableWidget_BuildingBike->update();
             i++;
 
@@ -432,7 +448,64 @@ void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить з�
     }
 
 
+        QSqlQuery queryCompany;
 
+        if (queryCompany.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + IdPred)){
+            queryCompany.first();
+        }
+
+        QSqlQuery queryClient;
+
+        if (queryClient.exec("SELECT * FROM Klient WHERE id_klienta = " + QString::number(IdKlienta))){
+            queryClient.first();
+        }
+
+        QString html =
+        "<h1 align=center>"
+        "Документ об оплате товаров <br>№ " + querySetId.value("kod_vsego_zakaza").toString()+"</h1>"
+        "<p align=justify>"
+        "Предприятие: " + queryCompany.value("kod_predpriatia").toString()+"<br>"
+        "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
+        "Заказчик: " + queryClient.value("fio_klienta").toString()+"<br>"
+        "Составляющие заказа: <br>";
+
+        for (int i = 0; i < Products.size(); i++){
+            html += QString::number(1+i);
+            html += ") Велосипед - ";
+            html += Products[i].TitleModel;
+            html += "; цена за штуку - ";
+            html += Products[i].price;
+            html += "рублей ; количество - ";
+            html += Products[i].count;
+            html += "<br>";
+        }
+
+        html += "Дата оформления заказа: " + DateOrder+"<br>"
+        "Дата изготовления: " + DateBuilding+"<br>"
+        "Дата доставки: " + DateDelivery+"<br>"
+        "Сумма заказа: " + QString::number(sum) + "<br>"
+        "Итог (с налогом): " + QString::number(TaxSumma) + "<br>"
+        "Заказ оплачен.<br>"
+        "</p>"
+        "<div align=right>IS</div>";
+
+        QTextDocument document;
+        document.setHtml(html);
+
+        QPrinter printer(QPrinter::PrinterResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setPaperSize(QPrinter::A4);
+        QString temp =  querySetId.value("kod_vsego_zakaza").toString();
+        QString FileName = "C:/Users/User/Desktop/bd/Payment_doc_client/"+temp+".pdf";
+        qDebug()<<FileName;
+        printer.setOutputFileName(FileName);
+        printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+
+        document.print(&printer);
+
+        QMessageBox msgBox;
+        msgBox.setText("Заказ оплачен.\nДокумент сохранен в "+temp+".pdf");
+        msgBox.exec();
 
 
 

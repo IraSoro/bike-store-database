@@ -15,6 +15,12 @@
 
 #include "zakazvelosipeda.h"
 
+struct Product{
+    QString price = "";
+    QString count = "";
+    QString TitleModel = "";
+};
+
 namespace Ui {
 class MainWindowKlient;
 }
@@ -58,6 +64,8 @@ private:
     QString CodeBike = "";
     int sum = 0;
     double TotalPrice = 0;
+
+    QVector <Product> Products;
 };
 
 #endif // MAINWINDOWKLIENT_H
