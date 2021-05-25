@@ -41,6 +41,10 @@ private slots:
 
     void on_pushButton_Price_clicked();
 
+    void UpdateBasket();
+
+    void on_pushButton_PayBasket_clicked();
+
 private:
     Ui::MainWindowKlient *ui;
 
@@ -50,7 +54,10 @@ private:
     QString IdPred = "1";
     int IdKlienta = 0;
     int IdBike = 0;
+    double PriceSimpleBike = 0;
+    QString CodeBike = "";
     int sum = 0;
+    double TotalPrice = 0;
 };
 
 #endif // MAINWINDOWKLIENT_H

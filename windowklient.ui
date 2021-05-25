@@ -36,7 +36,7 @@
      </size>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -95,6 +95,24 @@
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Количество</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButton_2">
          <property name="maximumSize">
           <size>
@@ -103,7 +121,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Заказать</string>
+          <string>Добавить</string>
          </property>
         </widget>
        </item>
@@ -308,7 +326,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Заказать</string>
+       <string>Добавить</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_Price">
@@ -330,6 +348,93 @@
         <x>120</x>
         <y>270</y>
         <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Корзина</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableWidget_SimpleBike">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>401</width>
+        <height>91</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget_BuildingBike">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>150</y>
+        <width>401</width>
+        <height>91</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Готовые велосипеды</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>130</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Собранные велосипеды</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_PayBasket">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>270</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Оплатить</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>270</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Всего к оплате:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_Total">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>270</y>
+        <width>113</width>
         <height>20</height>
        </rect>
       </property>

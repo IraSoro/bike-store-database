@@ -14,7 +14,7 @@ MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
 
     QSqlQuery query;
 
-    if (query.exec("SELECT model FROM Velosiped")){
+    if (query.exec("SELECT model FROM Sklad_Velosipedov WHERE kolichestvo_na_sklade > 0")){
         int i = 0;
         while (query.next()){
             QListWidgetItem * newItem = new QListWidgetItem ;
@@ -75,6 +75,8 @@ MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     }
 
     ui->pushButton_3->setEnabled(false);
+
+    UpdateBasket();
 }
 
 MainWindowKlient::~MainWindowKlient()
@@ -87,7 +89,7 @@ void MainWindowKlient::on_pushButton_clicked()  //показать
     SelectedBike = ui->listWidget->currentIndex().data().toString();
     QSqlQuery query;
 
-    if (query.exec("SELECT pic, opisanie, id_velosipeda FROM Velosiped WHERE model = \'" +
+    if (query.exec("SELECT * FROM Sklad_Velosipedov WHERE model = \'" +
                    SelectedBike + "\'")){
         if (query.next()){
             QPixmap img;
@@ -98,29 +100,47 @@ void MainWindowKlient::on_pushButton_clicked()  //показать
             ui->textEdit->setText(query.value("opisanie").toString());
             ui->pushButton_2->setEnabled(true);
             IdBike = query.value("id_velosipeda").toInt();
+            qDebug()<<"IdBike = "<<IdBike;
+            CodeBike = query.value("kod_velosipeda").toString();
+            PriceSimpleBike = query.value("cena").toDouble();
         }
     }
 }
 
-void MainWindowKlient::on_pushButton_2_clicked() //заказать
+void MainWindowKlient::on_pushButton_2_clicked() //добавить
 {
+
     QSqlQuery query;
 
-    if (query.exec("SELECT kolichestvo FROM Sklad_Velosipedov WHERE id_velosipeda = " +QString::number(IdBike))){
+    if (query.exec("SELECT kolichestvo_na_sklade FROM Sklad_Velosipedov WHERE id_velosipeda = " +QString::number(IdBike))){
         if (query.next()){
-            if (query.value(0).toInt() == 0){
+            if (query.value(0).toInt() < ui->spinBox->value()){
                 QMessageBox msgBox;
-                msgBox.setText("Данная модель отсутствует на складе.");
+                msgBox.setText("Такое количество данной модели отсутствует на складе.\nВведите количество по-меньше.");
                 msgBox.exec();
                 return;
             }
         }
     }
 
-    Bike = new ZakazVelosipeda(IdKlienta, IdBike);
-    connect(Bike, &ZakazVelosipeda::PersonWindow, this, &ZakazVelosipeda::show);
-    Bike->show();
-    this->close();
+    QSqlQuery queryOrderBike;
+
+    if (queryOrderBike.exec("INSERT INTO ZakazVelosipeda (id_velosipeda, kod_velosipeda, kolichestvo_v_zakaze, id_klienta, cena)"
+                            "VALUES (" + QString::number(IdBike) + ", \'" + CodeBike + "\', " + QString::number(ui->spinBox->value()) +"," +
+                            QString::number(IdKlienta) + ", "+ QString::number(PriceSimpleBike) + ")")){
+        QMessageBox msgBox;
+        msgBox.setText("Велосипед добавлен в корзину.");
+        msgBox.exec();
+
+
+        ui->graphicsView->setScene(0);
+        ui->textEdit->clear();
+        ui->pushButton_2->setEnabled(false);
+
+        UpdateBasket();
+
+    }
+
 }
 
 void MainWindowKlient::on_action_triggered()
@@ -157,91 +177,166 @@ void MainWindowKlient::on_pushButton_3_clicked() //заказать
 
     QString CodeBike = "";
 
-    QSqlQuery queryBuildBike, queryCodeBike, queryOrderBuildingBike, queryGetCompl;
-    if (queryBuildBike.exec("INSERT INTO Velosiped_sborka DEFAULT VALUES ")){
+
+    QSqlQuery queryBuildBike, queryCodeBike, queryOrderBuildingBike, queryGetCompl, queryWarehouse;
+    if (queryBuildBike.exec("INSERT INTO Velosiped_sborka (id_klienta, cena_vsego) VALUES (" + QString::number(IdKlienta) + ", " + QString::number(sum) + ")")){
         if (queryCodeBike.exec("SELECT * FROM Velosiped_sborka WHERE id_velosipeda=(SELECT max(id_velosipeda) FROM Velosiped_sborka)")){
             queryCodeBike.first();
             CodeBike = queryCodeBike.value("kod_velosipeda").toString();
             IdBuildingBike = queryCodeBike.value("id_velosipeda").toString();
+
             for (int i = 0; i < View.size(); i++){
-                if (queryGetCompl.exec("SELECT * FROM Sklad_Complect WHERE naimenovanie = \'" + View[i] + "\'")){
+                if (queryGetCompl.exec("SELECT * FROM PostavlyaemoeComplect WHERE naimenovanie = \'" + View[i] + "\'")){
                     queryGetCompl.first();
-                    QString IdCompl = queryGetCompl.value("id_complect").toString();
-                    QString KodCompl = queryGetCompl.value("kod_complect").toString();
-                    if (queryOrderBuildingBike.exec("INSERT INTO Velosiped_po_zakazu (id_klient, id_complect, id_velosipeda, "
-                                                    "kod_zakaza, kod_velosipeda, kod_complect, cena, data_zakaza, "
-                                                    "data_izgotov, data_dostavki) "
-                                                    "VALUES (" + QString::number(IdKlienta) + ", " + IdCompl + ", " +
-                                                    IdBuildingBike + ", \'" +
-                                                    CodeOrder + "\', \'" + CodeBike + "\', \'" + KodCompl+
-                                                    "\', " + QString::number(sum) + ", \'" + DateOrder +
-                                                    "\' , \'" + DateBuilding+ "\' , \'" + DateDelivery + "\')")){
+                    if (queryWarehouse.exec("SELECT * FROM Sklad_Complect WHERE naimenovanie = \'" + View[i] + "\'")){
+                        queryWarehouse.first();
+                        QString IdCompl = queryGetCompl.value("id_complect").toString();
+                        QString KodCompl = queryGetCompl.value("kod_complect").toString();
+                        QString PriceCompl = queryGetCompl.value("cena").toString();
+                        if (queryOrderBuildingBike.exec("INSERT INTO Complect_velosiped_po_zakazu (id_complect_na_sklade, id_complect, id_velosipeda, "
+                                                        "kod_velosipeda, kod_complect, cena) "
+                                                        "VALUES (" + queryWarehouse.value("id_complect_na_sklade").toString() + ", " +
+                                                        IdCompl + ", " + IdBuildingBike + ", \'" +
+                                                        CodeBike + "\', \'" + KodCompl + "\', " + PriceCompl + ")")){
 
 
 
+                        }
                     }
                 }
             }
+            QMessageBox msgBox;
+            msgBox.setText("Велосипед добавлен в корзину.");
+            msgBox.exec();
         }
     }
 
+    UpdateBasket();
 
-    QSqlQuery queryCompany;
 
-    if (queryCompany.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + IdPred)){
-        queryCompany.first();
+//    QSqlQuery queryCompany;
+
+//    if (queryCompany.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + IdPred)){
+//        queryCompany.first();
+//    }
+
+//    QSqlQuery queryClient;
+
+//    if (queryClient.exec("SELECT * FROM Klient WHERE id_klienta = " + QString::number(IdKlienta))){
+//        queryClient.first();
+//    }
+
+//    QString html =
+//    "<h1 align=center>"
+//    "Документ на изготовление и доставку велосипеда<br>№ " + CodeOrder+"</h1>"
+//    "<p align=justify>"
+//    "Предприятие: " + queryCompany.value("kod_predpriatia").toString()+"<br>"
+//    "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
+//    "Заказчик: " + queryClient.value("fio_klienta").toString()+"<br>"
+//    "Код заказываемого велосипеда: " + CodeBike+"<br>"
+//    "Составляющие велосипеда: <br>";
+
+//    for (int i = 0; i < View.size(); i++){
+//        html += View[i];
+//        html += "<br>";
+//    }
+
+//    html += "Дата оформления заказа: " + DateOrder+"<br>"
+//    "Дата изготовления: " + DateBuilding+"<br>"
+//    "Дата доставки: " + DateDelivery+"<br>"
+//    "Сумма заказа: " + QString::number(sum) + "<br>"
+//    "Заказ оплачен.<br>"
+//    "</p>"
+//    "<div align=right>IS</div>";
+
+//    QTextDocument document;
+//    document.setHtml(html);
+
+//    QPrinter printer(QPrinter::PrinterResolution);
+//    printer.setOutputFormat(QPrinter::PdfFormat);
+//    printer.setPaperSize(QPrinter::A4);
+//    QString temp = "СБ - ВЕЛ - " + IdBuildingBike;
+//    QString FileName = "C:/Users/User/Desktop/bd/Client_orders/"+temp+".pdf";
+//    qDebug()<<FileName;
+//    printer.setOutputFileName(FileName);
+//    printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+
+//    document.print(&printer);
+
+//    QMessageBox msgBox;
+//    msgBox.setText("Заказ оплачен.\nДокумент сохранен в "+temp+".pdf");
+//    msgBox.exec();
+
+//    ui->pushButton_3->setEnabled(false);
+//    ui->lineEdit_Price->clear();
+
+}
+
+void MainWindowKlient::UpdateBasket(){
+
+    TotalPrice = 0;
+
+    while (ui->tableWidget_SimpleBike->rowCount() > 0){
+        ui->tableWidget_SimpleBike->removeRow(0);
     }
 
-    QSqlQuery queryClient;
-
-    if (queryClient.exec("SELECT * FROM Klient WHERE id_klienta = " + QString::number(IdKlienta))){
-        queryClient.first();
+    while (ui->tableWidget_BuildingBike->rowCount() > 0){
+        ui->tableWidget_BuildingBike->removeRow(0);
     }
 
-    QString html =
-    "<h1 align=center>"
-    "Документ на изготовление и доставку велосипеда<br>№ " + CodeOrder+"</h1>"
-    "<p align=justify>"
-    "Предприятие: " + queryCompany.value("kod_predpriatia").toString()+"<br>"
-    "Директор: " + queryCompany.value("fio_directora").toString()+"<br>"
-    "Заказчик: " + queryClient.value("fio_klienta").toString()+"<br>"
-    "Код заказываемого велосипеда: " + CodeBike+"<br>"
-    "Составляющие велосипеда: <br>";
+    QSqlQuery querySimpleBike;
+    if (querySimpleBike.exec("SELECT * FROM ZakazVelosipeda WHERE kod_zakaza = '0' AND id_klienta = " + QString::number(IdKlienta))){
 
-    for (int i = 0; i < View.size(); i++){
-        html += View[i];
-        html += "<br>";
+        ui->tableWidget_SimpleBike->setColumnCount(3);
+        QStringList name_table;
+        name_table << "Модель" << "Количество" << "Цена";
+        ui->tableWidget_SimpleBike->setHorizontalHeaderLabels(name_table);
+
+        int i = 0;
+
+        while (querySimpleBike.next()){
+            ui->tableWidget_SimpleBike->insertRow( ui->tableWidget_SimpleBike->rowCount() );
+
+            QTableWidgetItem *itm = new QTableWidgetItem(querySimpleBike.value("kod_velosipeda").toString());
+            ui->tableWidget_SimpleBike->setItem(i,0,itm);
+            QTableWidgetItem *itm1 = new QTableWidgetItem(querySimpleBike.value("kolichestvo_v_zakaze").toString());
+            ui->tableWidget_SimpleBike->setItem(i,1,itm1);
+            TotalPrice += querySimpleBike.value("cena").toDouble();
+            QTableWidgetItem *itm2 = new QTableWidgetItem(querySimpleBike.value("cena").toString());
+            ui->tableWidget_SimpleBike->setItem(i,2,itm2);
+            ui->tableWidget_SimpleBike->update();
+            i++;
+
+        }
     }
 
-    html += "Дата оформления заказа: " + DateOrder+"<br>"
-    "Дата изготовления: " + DateBuilding+"<br>"
-    "Дата доставки: " + DateDelivery+"<br>"
-    "Сумма заказа: " + QString::number(sum) + "<br>"
-    "Заказ оплачен.<br>"
-    "</p>"
-    "<div align=right>IS</div>";
+    QSqlQuery queryBuildingBike;
+    if (queryBuildingBike.exec("SELECT * FROM Velosiped_sborka WHERE kod_vsego_zakaza = '0' AND id_klienta = " + QString::number(IdKlienta))){
 
-    QTextDocument document;
-    document.setHtml(html);
+        ui->tableWidget_BuildingBike->setColumnCount(3);
+        QStringList name_table;
+        name_table << "Модель" << "Количество" << "Цена";
+        ui->tableWidget_BuildingBike->setHorizontalHeaderLabels(name_table);
 
-    QPrinter printer(QPrinter::PrinterResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setPaperSize(QPrinter::A4);
-    QString temp = "СБ - ВЕЛ - " + IdBuildingBike;
-    QString FileName = "C:/Users/User/Desktop/bd/Client_orders/"+temp+".pdf";
-    qDebug()<<FileName;
-    printer.setOutputFileName(FileName);
-    printer.setPageMargins(QMarginsF(15, 15, 15, 15));
+        int i = 0;
 
-    document.print(&printer);
+        while (queryBuildingBike.next()){
+            ui->tableWidget_BuildingBike->insertRow( ui->tableWidget_BuildingBike->rowCount() );
 
-    QMessageBox msgBox;
-    msgBox.setText("Заказ оплачен.\nДокумент сохранен в "+temp+".pdf");
-    msgBox.exec();
+            QTableWidgetItem *itm = new QTableWidgetItem(queryBuildingBike.value("kod_velosipeda").toString());
+            ui->tableWidget_BuildingBike->setItem(i,0,itm);
+            QTableWidgetItem *itm1 = new QTableWidgetItem(queryBuildingBike.value("kolichestvo").toString());
+            ui->tableWidget_BuildingBike->setItem(i,1,itm1);
+            TotalPrice += queryBuildingBike.value("cena_vsego").toDouble();
+            QTableWidgetItem *itm2 = new QTableWidgetItem(queryBuildingBike.value("cena_vsego").toString());
+            ui->tableWidget_BuildingBike->setItem(i,2,itm2);
+            ui->tableWidget_BuildingBike->update();
+            i++;
 
-    ui->pushButton_3->setEnabled(false);
-    ui->lineEdit_Price->clear();
+        }
+    }
 
+    ui->lineEdit_Total->setText(QString::number(TotalPrice));
 }
 
 void MainWindowKlient::on_pushButton_Price_clicked()
@@ -294,4 +389,51 @@ void MainWindowKlient::on_pushButton_Price_clicked()
     ui->lineEdit_Price->setText(QString::number(sum));
 
     ui->pushButton_3->setEnabled(true);
+}
+
+void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить заказ
+{
+    QSqlQuery queryTotalOrder, querySimpleBike, queryBiuldingBike, querySetId;
+
+    QString DateOrder = QDate::currentDate().toString(Qt::ISODateWithMs);
+    QString DateBuilding = QDate::currentDate().addDays(20).toString(Qt::ISODateWithMs);
+    QString DateDelivery = QDate::currentDate().addDays(30).toString(Qt::ISODateWithMs);
+
+    if (queryTotalOrder.exec("INSERT INTO Korzina_vseh_velosipedov (id_klienta, data_zakaza, data_izgotov, data_dostavki, oplacheno, summa)"
+                             "VALUES ("+ QString::number(IdKlienta) + ", \'" + DateOrder+"\', \'" + DateBuilding+"\', \'"+DateDelivery+
+                             "\', 1, " + QString::number(TotalPrice)+") ")){
+
+
+          if(querySetId.exec("SELECT * FROM Korzina_vseh_velosipedov WHERE id_vsego_zakaza=(SELECT max(id_vsego_zakaza) FROM Korzina_vseh_velosipedov)")){
+              if (querySetId.first()){
+
+              }
+
+              if (querySimpleBike.exec("UPDATE ZakazVelosipeda SET id_vsego_zakaza = " + querySetId.value("id_vsego_zakaza").toString()+
+                                       ", kod_zakaza = \'" + querySetId.value("kod_vsego_zakaza").toString() +
+                                       "\' WHERE id_klienta = " + QString::number(IdKlienta) + " AND kod_zakaza = \'0\'")){
+
+              }
+
+              if (queryBiuldingBike.exec("UPDATE Velosiped_sborka SET id_vsego_zakaza = " + querySetId.value("id_vsego_zakaza").toString()+
+                                         ", kod_vsego_zakaza = \'" + querySetId.value("kod_vsego_zakaza").toString() +
+                                         "\' WHERE id_klienta = " + QString::number(IdKlienta) + " AND kod_vsego_zakaza = \'0\'")){
+
+              }
+          }
+    }
+
+    QSqlQuery queryPayment;
+    double TaxSumma = 1.2 * TotalPrice;
+    if (queryPayment.exec("INSERT INTO Schet_predpriatia (summa_s_nds, id_vsego_zakaza) "
+                          "VALUES (" + QString::number(TaxSumma) + ", " + querySetId.value("id_vsego_zakaza").toString() + ")")){
+
+
+    }
+
+
+
+
+
+
 }
