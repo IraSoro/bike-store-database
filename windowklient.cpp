@@ -489,6 +489,7 @@ void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить з�
         msgBox.exec();
 
         UpdateBasket();
+        UpdateStatusOrder();
 
 }
 
