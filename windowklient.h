@@ -52,6 +52,8 @@ private slots:
 
     void on_pushButton_PayBasket_clicked();
 
+    void on_listWidget_Schema_itemDoubleClicked(QListWidgetItem *item);
+
 private:
     Ui::MainWindowKlient *ui;
 

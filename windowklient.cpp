@@ -76,6 +76,16 @@ MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
 
     ui->pushButton_3->setEnabled(false);
 
+    QSqlQuery queryGetTitleScheme;
+    if (queryGetTitleScheme.exec("SELECT model FROM Sklad_Velosipedov")){
+        while (queryGetTitleScheme.next()){
+            QListWidgetItem * newItem = new QListWidgetItem ;
+            newItem -> setText(queryGetTitleScheme.value(0).toString());
+            ui->listWidget_Schema->insertItem(priv , newItem);
+        }
+    }
+
+
     UpdateBasket();
     UpdateStatusOrder();
 }
@@ -494,3 +504,53 @@ void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить з�
 }
 
 
+void MainWindowKlient::on_listWidget_Schema_itemDoubleClicked(QListWidgetItem *item)
+{
+    while (ui->tableWidget->rowCount() > 0){
+        ui->tableWidget->removeRow(0);
+    }
+
+    while (ui->tableWidget->rowCount() > 0){
+        ui->tableWidget->removeRow(0);
+    }
+
+    ui->lineEdit->clear();
+    ui->lineEdit_2->clear();
+
+    QSqlQuery query;
+    if (query.exec("SELECT opisanie, cena FROM Sklad_Velosipedov WHERE model = \'" + item->text() + "\'")){
+        if (query.first()){
+            ui->lineEdit->setText(query.value(0).toString());
+            ui->lineEdit_2->setText(query.value(1).toString());
+        }
+
+    }
+
+    QSqlQuery querySimpleBike;
+    if (querySimpleBike.exec("SELECT id_complect FROM Schema_sborki WHERE id_velosipeda = "
+                             "(SELECT id_velosipeda FROM Sklad_Velosipedov WHERE model = \'" + item->text() + "\')")){
+
+        ui->tableWidget->setColumnCount(8);
+        ui->tableWidget->setRowCount(1);
+        QStringList name_table;
+        name_table << "Привод" << "Управление" << "Педали"<< "Тормоза и запчасти"<<"Колеса"<<"Резина"<<"Тросы и оплетки"<<"Рамы";
+        ui->tableWidget->setHorizontalHeaderLabels(name_table);
+
+        int i = 0;
+
+        while (querySimpleBike.next()){
+            QSqlQuery queryCompl;
+            if (queryCompl.exec("SELECT naimenovanie FROM PostavlyaemoeComplect WHERE id_complect = " + querySimpleBike.value(0).toString())){
+                if (queryCompl.first()){
+                    QTableWidgetItem *itm = new QTableWidgetItem(queryCompl.value(0).toString());
+                    ui->tableWidget->setItem(0,i,itm);
+                }
+            }
+
+            ui->tableWidget_SimpleBike->update();
+            i++;
+        }
+    }
+
+
+}
