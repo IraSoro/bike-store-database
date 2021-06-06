@@ -65,6 +65,7 @@ private:
     QString IdSelectedPostInBasket = "";
     QString TitleModel = "<br>";
     int sum = 0;
+    QVector <QString> View;
 
 
     void ConclusionNewContract(QDate start, QDate finish, QString KodDogovora);

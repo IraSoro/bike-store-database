@@ -105,16 +105,17 @@ void WindowPredpriatia::UpdateForm(){
 
 
     int priv = 0, uprav = 0, ped = 0, torm = 0, kol = 0, rez = 0, tros = 0, ram = 0;
-    QSqlQuery queryBiuldBike;
-    if (queryBiuldBike.exec("SELECT * FROM Sklad_Complect")){
-        while (queryBiuldBike.next()){
-            QString View = "";
-            QString Model = queryBiuldBike.value("naimenovanie").toString();
+//    QSqlQuery queryBiuldBike;
+//    if (queryBiuldBike.exec("SELECT * FROM Sklad_Complect")){
+//        while (queryBiuldBike.next()){
+//            QString View = "";
+//            QString Model = queryBiuldBike.value("naimenovanie").toString();
             QSqlQuery querySearchView;
-            if (querySearchView.exec("SELECT kategoria FROM PostavlyaemoeComplect WHERE id_complect = " + queryBiuldBike.value("id_complect").toString())){
-                querySearchView.first();
-                View = querySearchView.value(0).toString();
+            if (querySearchView.exec("SELECT kategoria, naimenovanie FROM PostavlyaemoeComplect")){
+                while (querySearchView.next()){
+                QString View = querySearchView.value("kategoria").toString();
                 QListWidgetItem * newItem = new QListWidgetItem ;
+                QString Model = querySearchView.value("naimenovanie").toString();
                 newItem -> setText(Model);
                 if (View == "Привод"){
                     ui->listWidget_Privod->insertItem(priv , newItem);
@@ -150,7 +151,8 @@ void WindowPredpriatia::UpdateForm(){
                 }
             }
         }
-    }
+//        }
+//    }
 
     ui->pushButton_AddedSchema->setEnabled(false);
 }
@@ -760,9 +762,8 @@ void WindowPredpriatia::on_listWidget_Post_itemDoubleClicked(QListWidgetItem *it
 
 void WindowPredpriatia::on_pushButton_Price_clicked()
 {
-    sum = 0;
+    int sumSchema = 0;
 
-    QVector <QString> View;
     QString Privod = ui->listWidget_Privod->currentIndex().data().toString();
     View.push_back(Privod);
     QString Upravl = ui->listWidget_Upravl->currentIndex().data().toString();
@@ -788,6 +789,26 @@ void WindowPredpriatia::on_pushButton_Price_clicked()
         return;
     }
 
+    QSqlQuery queryPrice;
+
+    QString IdCompl = "";
+
+    for (int i = 0; i < View.size(); i++){
+//        if (queryPrice.exec("SELECT * FROM Sklad_Complect WHERE naimenovanie = \'" + View[i] + "\'")){
+//            queryPrice.first();
+//            IdCompl = queryPrice.value("id_complect").toString();
+            QSqlQuery queryPriceInPost;
+            if (queryPriceInPost.exec("SELECT cena FROM PostavlyaemoeComplect WHERE naimenovanie = \'" + View[i] + "\'")){
+                queryPriceInPost.first();
+                sumSchema += queryPriceInPost.value(0).toInt();
+            }
+//        }
+    }
+
+    int PriceWork = 10000;
+    sumSchema += PriceWork;
+    ui->lineEdit_Price->clear();
+    ui->lineEdit_Price->setText(QString::number(sumSchema));
 
     ui->pushButton_AddedSchema->setEnabled(true);
 }
@@ -800,4 +821,32 @@ void WindowPredpriatia::on_pushButton_AddedSchema_clicked()
         msgBox.exec();
         return;
     }
+
+    QVector <QString> IdCompl;
+    int price = 0;
+
+    for (int i = 0; i < View.size(); i++){
+        QSqlQuery queryGetId;
+        if (queryGetId.exec(("SELECT id_complect, cena FROM PostavlyaemoeComplect WHERE naimenovanie = \'" + View[i] + "\'"))){
+            if (queryGetId.first()){
+                QString temp = queryGetId.value("id_complect").toString();
+                IdCompl.push_back(temp);
+                price += queryGetId.value("cena").toInt();
+            }
+        }
+    }
+    qDebug()<<IdCompl;
+
+    QSqlQuery queryAddingSchema;
+    if (queryAddingSchema.exec("INSERT INTO Schema_Sborki (nazvanie, opisanie, id_complect_privod, id_complect_uprav, id_complect_pedal,"
+                               "id_complect_tormoz, id_complect_kolesa, id_complect_rezina, id_complect_tros, id_complect_ramki, cena)"
+                               "VALUES (\'" +  ui->lineEdit_TitleModel->text() + "\', \'" + ui->lineEdit_Description->text() + "\', "+
+                               IdCompl[0] + ", " + IdCompl[1] + ", " + IdCompl[2] + ", " + IdCompl[3] + ", " + IdCompl[4] + ", " +
+                               IdCompl[5] + ", " + IdCompl[6] + ", " + IdCompl[7] + ", " + QString::number(price) + ")")){
+        QMessageBox msgBox;
+        msgBox.setText("Схема сборки добавлена");
+        msgBox.exec();
+        return;
+    }
+
 }
