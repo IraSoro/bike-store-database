@@ -36,98 +36,8 @@
      </size>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Выбор велосипеда</string>
-     </attribute>
-     <widget class="QWidget" name="verticalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>171</width>
-        <height>261</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QListWidget" name="listWidget"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Показать</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="verticalLayoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>10</y>
-        <width>211</width>
-        <height>261</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QGraphicsView" name="graphicsView">
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>170</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTextEdit" name="textEdit">
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>50</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Количество</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBox">
-           <property name="minimum">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Добавить</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
     <widget class="QWidget" name="tab_5">
      <attribute name="title">
       <string>Велосипед по схеме</string>
@@ -144,13 +54,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QListWidget" name="listWidget_Schema"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="text">
-          <string>Показать</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
