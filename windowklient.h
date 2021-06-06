@@ -54,6 +54,8 @@ private slots:
 
     void on_listWidget_Schema_itemDoubleClicked(QListWidgetItem *item);
 
+    void on_pushButton_5_clicked();
+
 private:
     Ui::MainWindowKlient *ui;
 

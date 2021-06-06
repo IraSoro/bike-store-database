@@ -552,5 +552,49 @@ void MainWindowKlient::on_listWidget_Schema_itemDoubleClicked(QListWidgetItem *i
         }
     }
 
+}
+
+void MainWindowKlient::on_pushButton_5_clicked()
+{
+    QString Schema = ui->listWidget_Schema->currentIndex().data().toString();
+
+    QSqlQuery querySimpleBike;
+    bool found = true;
+    if (querySimpleBike.exec("SELECT id_complect FROM Schema_sborki WHERE id_velosipeda = "
+                             "(SELECT id_velosipeda FROM Sklad_Velosipedov WHERE model = \'" + Schema + "\')")){
+
+        while (querySimpleBike.next()){
+            QSqlQuery query;
+            if (query.exec("SELECT id_complect_na_sklade FROM Sklad_Complect WHERE id_complect = " + querySimpleBike.value(0).toString())){
+                if (!query.first()){
+                    found = false;
+                    QMessageBox msgBox;
+                    msgBox.setText("Велосипед невозможно добавить, т. к. не все комплектующие данной схемы есть на складе.");
+                    msgBox.exec();
+                    return;
+                }
+            }
+        }
+    }
+
+    QSqlQuery queryBike;
+    if (queryBike.exec("SELECT * FROM Sklad_Velosipedov WHERE model = \'" + Schema + "\'")){
+        if (queryBike.first()){
+            qDebug()<<"FGHJKL;";
+        }
+    }
+
+    QSqlQuery queryOrderBike;
+
+    if (queryOrderBike.exec("INSERT INTO ZakazVelosipeda (id_velosipeda, kod_velosipeda, id_klienta, cena)"
+                            "VALUES (" + queryBike.value("id_velosipeda").toString() + ", \'" + queryBike.value("kod_velosipeda").toString()+ "\', "  +
+                            QString::number(IdKlienta) + ", "+queryBike.value("cena").toString() + ")")){
+        QMessageBox msgBox;
+        msgBox.setText("Велосипед добавлен в корзину.");
+        msgBox.exec();
+
+    }
+
+    UpdateBasket();
 
 }
