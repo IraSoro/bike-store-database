@@ -498,7 +498,7 @@
      <attribute name="title">
       <string> Создать схему сборки</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="pushButton_AddedSchema">
       <property name="geometry">
        <rect>
         <x>440</x>
@@ -730,7 +730,7 @@
       <property name="title">
        <string/>
       </property>
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="lineEdit_TitleModel">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -740,7 +740,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit_2">
+      <widget class="QLineEdit" name="lineEdit_Description">
        <property name="geometry">
         <rect>
          <x>10</x>

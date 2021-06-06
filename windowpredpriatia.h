@@ -53,6 +53,10 @@ private slots:
 
     void on_listWidget_Post_itemDoubleClicked(QListWidgetItem *item);
 
+    void on_pushButton_Price_clicked();
+
+    void on_pushButton_AddedSchema_clicked();
+
 private:
     Ui::WindowPredpriatia *ui;
 

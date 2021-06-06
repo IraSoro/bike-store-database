@@ -102,6 +102,57 @@ void WindowPredpriatia::UpdateForm(){
             i++;
         }
     }
+
+
+    int priv = 0, uprav = 0, ped = 0, torm = 0, kol = 0, rez = 0, tros = 0, ram = 0;
+    QSqlQuery queryBiuldBike;
+    if (queryBiuldBike.exec("SELECT * FROM Sklad_Complect")){
+        while (queryBiuldBike.next()){
+            QString View = "";
+            QString Model = queryBiuldBike.value("naimenovanie").toString();
+            QSqlQuery querySearchView;
+            if (querySearchView.exec("SELECT kategoria FROM PostavlyaemoeComplect WHERE id_complect = " + queryBiuldBike.value("id_complect").toString())){
+                querySearchView.first();
+                View = querySearchView.value(0).toString();
+                QListWidgetItem * newItem = new QListWidgetItem ;
+                newItem -> setText(Model);
+                if (View == "Привод"){
+                    ui->listWidget_Privod->insertItem(priv , newItem);
+                    priv++;
+                } else
+                if (View == "Управление"){
+                    ui->listWidget_Upravl->insertItem(uprav, newItem);
+                    uprav++;
+                } else
+                if (View == "Педали"){
+                    ui->listWidget_Pedal->insertItem(ped, newItem);
+                    ped++;
+                } else
+                if (View == "Тормоза и запчасти"){
+                    ui->listWidget_Tormoz->insertItem(torm, newItem);
+                    torm++;
+                } else
+                if (View == "Колеса"){
+                    ui->listWidget_Kolesa->insertItem(kol, newItem);
+                    kol++;
+                } else
+                if (View == "Резина"){
+                    ui->listWidget_Rezina->insertItem(rez, newItem);
+                    rez++;
+                } else
+                if (View == "Тросы и оплетки"){
+                    ui->listWidget_Tros->insertItem(tros, newItem);
+                    tros++;
+                } else
+                if (View == "Рамки, вилки, задние амортизаторы"){
+                    ui->listWidget_Ramki->insertItem(ram, newItem);
+                    ram++;
+                }
+            }
+        }
+    }
+
+    ui->pushButton_AddedSchema->setEnabled(false);
 }
 
 void WindowPredpriatia::on_pushButton_add_post_clicked()
@@ -705,4 +756,48 @@ void WindowPredpriatia::on_action_triggered()
 void WindowPredpriatia::on_listWidget_Post_itemDoubleClicked(QListWidgetItem *item)
 {
     qDebug()<<"12345678";
+}
+
+void WindowPredpriatia::on_pushButton_Price_clicked()
+{
+    sum = 0;
+
+    QVector <QString> View;
+    QString Privod = ui->listWidget_Privod->currentIndex().data().toString();
+    View.push_back(Privod);
+    QString Upravl = ui->listWidget_Upravl->currentIndex().data().toString();
+    View.push_back(Upravl);
+    QString Pedal = ui->listWidget_Pedal->currentIndex().data().toString();
+    View.push_back(Pedal);
+    QString Tormoz = ui->listWidget_Tormoz->currentIndex().data().toString();
+    View.push_back(Tormoz);
+    QString Kolesa = ui->listWidget_Kolesa->currentIndex().data().toString();
+    View.push_back(Kolesa);
+    QString Rezina = ui->listWidget_Rezina->currentIndex().data().toString();
+    View.push_back(Rezina);
+    QString Tros = ui->listWidget_Tros->currentIndex().data().toString();
+    View.push_back(Tros);
+    QString Ramki = ui->listWidget_Ramki->currentIndex().data().toString();
+    View.push_back(Ramki);
+
+    if (Privod == "" || Upravl == "" || Pedal == "" || Tormoz == "" ||
+        Kolesa == "" || Rezina == "" || Tros  == "" || Ramki  == ""){
+        QMessageBox msgBox;
+        msgBox.setText("Вы выбрали не все комплектующие.");
+        msgBox.exec();
+        return;
+    }
+
+
+    ui->pushButton_AddedSchema->setEnabled(true);
+}
+
+void WindowPredpriatia::on_pushButton_AddedSchema_clicked()
+{
+    if (ui->lineEdit_TitleModel->text() == "" || ui->lineEdit_Description->text() == "" ){
+        QMessageBox msgBox;
+        msgBox.setText("Вы ввели не всю информацию о модели.");
+        msgBox.exec();
+        return;
+    }
 }
