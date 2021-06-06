@@ -1,4 +1,4 @@
-// TODO: проверить код поставщика и во всех таблицах (он разный!!!), проверить итоговую цену (возможно она не умножается на количество товаров)
+// TODO:    в схеме цена не очищается!!!! проверить код поставщика и во всех таблицах (он разный!!!), проверить итоговую цену (возможно она не умножается на количество товаров)
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -837,16 +837,37 @@ void WindowPredpriatia::on_pushButton_AddedSchema_clicked()
     }
     qDebug()<<IdCompl;
 
-    QSqlQuery queryAddingSchema;
-    if (queryAddingSchema.exec("INSERT INTO Schema_Sborki (nazvanie, opisanie, id_complect_privod, id_complect_uprav, id_complect_pedal,"
-                               "id_complect_tormoz, id_complect_kolesa, id_complect_rezina, id_complect_tros, id_complect_ramki, cena)"
-                               "VALUES (\'" +  ui->lineEdit_TitleModel->text() + "\', \'" + ui->lineEdit_Description->text() + "\', "+
-                               IdCompl[0] + ", " + IdCompl[1] + ", " + IdCompl[2] + ", " + IdCompl[3] + ", " + IdCompl[4] + ", " +
-                               IdCompl[5] + ", " + IdCompl[6] + ", " + IdCompl[7] + ", " + QString::number(price) + ")")){
-        QMessageBox msgBox;
-        msgBox.setText("Схема сборки добавлена");
-        msgBox.exec();
-        return;
+    QString kodSchema = "Схема - " + QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    QSqlQuery queryAddingBikeSchema;
+    if (queryAddingBikeSchema.exec("INSERT INTO Sklad_Velosipedov (model, cena, opisanie, kod_schem)"
+                                   "VALUES (\'" + ui->lineEdit_TitleModel->text() + "\', " + QString::number(price) + ", \'"+
+                                   ui->lineEdit_Description->text() + "\', \'" + kodSchema + "\')")){
+
+
     }
+
+
+    for (int i = 0; i < IdCompl.size(); i++){
+        QSqlQuery queryAddingSchema;
+        if (queryAddingSchema.exec("INSERT INTO Schema_Sborki (kod_schem, id_complect, id_velosipeda) "
+                                   "VALUES (\'" + kodSchema + "\', " + IdCompl[i] + ", (SELECT MAX(id_velosipeda) FROM Sklad_Velosipedov))")){
+
+            qDebug()<<"ok";
+        }
+    }
+
+
+//    QSqlQuery queryAddingSchema;
+//    if (queryAddingSchema.exec("INSERT INTO Schema_Sborki (nazvanie, opisanie, id_complect_privod, id_complect_uprav, id_complect_pedal,"
+//                               "id_complect_tormoz, id_complect_kolesa, id_complect_rezina, id_complect_tros, id_complect_ramki, cena)"
+//                               "VALUES (\'" +  ui->lineEdit_TitleModel->text() + "\', \'" + ui->lineEdit_Description->text() + "\', "+
+//                               IdCompl[0] + ", " + IdCompl[1] + ", " + IdCompl[2] + ", " + IdCompl[3] + ", " + IdCompl[4] + ", " +
+//                               IdCompl[5] + ", " + IdCompl[6] + ", " + IdCompl[7] + ", " + QString::number(price) + ")")){
+//        QMessageBox msgBox;
+//        msgBox.setText("Схема сборки добавлена");
+//        msgBox.exec();
+//        return;
+//    }
 
 }
