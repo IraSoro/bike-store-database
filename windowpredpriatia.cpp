@@ -210,14 +210,131 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
 
 
     QString html =
-    "<h1 align=center>"
-    "Договор с поставщиком<br>№ " + queryGet.value("kod_dogovora").toString()+"</h1>"
+    "<h2 align=center>"
+    "Договор № " + queryGet.value("kod_dogovora").toString()+"<br>О КУПЛЕ-ПРОДАЖЕ ПРОДУКТА</h2>"
     "<p align=justify>"
-    "Предприятие: " + queryPred.value("kod_predpriatia").toString()+"<br>"
-    "Директор: " + queryPred.value("fio_directora").toString()+"<br>"
-    "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
-    "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
-    "Дата начала действия договора: " + DateEditStart.toString(Qt::ISODateWithMs)+"<br>"
+    "Закрытое акционерное общество \"Педалька\", (лицензия № В350672 выдана 29.05.2021 г., сертификат "
+    "соответствия № РОСС RU.УИ09 У 00373), именуемое в дальнейшем «ПРОДАВЕЦ», в лице Генерального директора"
+    "Сорокина И. В., действующего на основании Устава, с одной стороны, и " + queryPred.value("fio_directora").toString() +
+    ", именуемое в дальнейшем ПОКУПАТЕЛЬ, с другой стороны, заключили настоящий Договор о нижеследующем:"
+    "</p>"
+    "<h3 align=center>1. ПРЕДМЕТ ДОГОВОРА</h3>"
+    "<p align=justify>";
+
+    QFile file("C:/Users/User/Desktop/bd/1.txt");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        html+= in.readLine();
+    }
+    file.close();
+
+    html += "<h3 align=center>2. ТЕРМИНОЛОГИЯ</h3><p align=justify>";
+    QFile file2("C:/Users/User/Desktop/bd/2.txt");
+    if (!file2.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in2(&file2);
+    while (!in2.atEnd()) {
+        html+= in2.readLine();
+    }
+    file2.close();
+
+    html += "<h3 align=center>3. ОБЯЗАННОСТИ СТОРОН И ПОРЯДОК ВЗАИМОДЕЙСТВИЯ</h3><p align=justify>";
+    QFile file3("C:/Users/User/Desktop/bd/3.txt");
+    if (!file3.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in3(&file3);
+    while (!in3.atEnd()) {
+        html+= in3.readLine();
+    }
+    file3.close();
+
+    html += "<h3 align=center>4. ПОРЯДОК РАСЧЕТОВ</h3><p align=justify>";
+    QFile file4("C:/Users/User/Desktop/bd/4.txt");
+    if (!file4.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in4(&file4);
+    while (!in4.atEnd()) {
+        html+= in4.readLine();
+    }
+    file4.close();
+
+    html += "<h3 align=center>5. ОТВЕТСТВЕННОСТЬ СТОРОН</h3><p align=justify>";
+    QFile file5("C:/Users/User/Desktop/bd/5.txt");
+    if (!file5.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in5(&file5);
+    while (!in5.atEnd()) {
+        html+= in5.readLine();
+    }
+    file5.close();
+
+    html += "<h3 align=center>6. УСЛОВИЯ ИЗМЕНЕНИЯ И АННУЛЯЦИИ ЗАЯВОК</h3><p align=justify>";
+    QFile file6("C:/Users/User/Desktop/bd/6.txt");
+    if (!file6.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in6(&file6);
+    while (!in6.atEnd()) {
+        html+= in6.readLine();
+    }
+    file6.close();
+
+    html += "<h3 align=center>7. РЕКЛАМАЦИИ</h3><p align=justify>";
+    QFile file7("C:/Users/User/Desktop/bd/7.txt");
+    if (!file7.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in7(&file7);
+    while (!in7.atEnd()) {
+        html+= in7.readLine();
+    }
+    file7.close();
+
+    html += "<h3 align=center>8. РАЗРЕШЕНИЕ СПОРОВ И РАЗНОГЛАСИЙ</h3><p align=justify>";
+    QFile file8("C:/Users/User/Desktop/bd/8.txt");
+    if (!file8.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in8(&file8);
+    while (!in8.atEnd()) {
+        html+= in8.readLine();
+    }
+    file8.close();
+
+    html += "<h3 align=center>9. ОБСТОЯТЕЛЬСТВА ФОРС-МАЖОР</h3><p align=justify>";
+    QFile file9("C:/Users/User/Desktop/bd/9.txt");
+    if (!file9.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in9(&file9);
+    while (!in9.atEnd()) {
+        html+= in9.readLine();
+    }
+    file9.close();
+
+    html += "<h3 align=center>10.   ПРОЧИЕ УСЛОВИЯ</h3><p align=justify>";
+    QFile file10("C:/Users/User/Desktop/bd/10.txt");
+    if (!file10.open(QIODevice::ReadOnly)) {
+        qDebug()<<"невозможно открыть файл";
+    }
+    QTextStream in10(&file10);
+    while (!in10.atEnd()) {
+        html+= in10.readLine();
+    }
+    file10.close();
+
+//    html += "<br>Предприятие: " + queryPred.value("kod_predpriatia").toString()+"<br>"
+//    "Директор: " + queryPred.value("fio_directora").toString()+"<br>"
+//    "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
+//    "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
+    html += "<br><br>Дата начала действия договора: " + DateEditStart.toString(Qt::ISODateWithMs)+"<br>"
     "Дата окончания действия договора: " + DateEditFinish.toString(Qt::ISODateWithMs) +"<br>"
     "</p>"
     "<div align=right>IS</div>";

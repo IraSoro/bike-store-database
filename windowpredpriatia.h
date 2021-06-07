@@ -13,6 +13,8 @@
 #include <QListWidgetItem>
 #include <QPrinter>
 #include <QTextDocument>
+#include <QFile>
+#include <QTextStream>
 
 #include "QtSql/QSqlDatabase"
 #include "QSqlQuery"
