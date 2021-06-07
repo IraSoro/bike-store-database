@@ -21,6 +21,17 @@ struct Product{
     QString TitleModel = "";
 };
 
+struct ComplectBike{
+    QString privod = "";
+    QString uprav = "";
+    QString pedal = "";
+    QString tormoz = "";
+    QString kolesa = "";
+    QString rezina = "";
+    QString tros = "";
+    QString ramki = "";
+};
+
 namespace Ui {
 class MainWindowKlient;
 }
@@ -71,6 +82,7 @@ private:
     double TotalPrice = 0;
 
     QVector <Product> Products;
+    QVector <QString> ComplBike;
 };
 
 #endif // MAINWINDOWKLIENT_H

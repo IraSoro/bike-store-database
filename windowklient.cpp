@@ -266,6 +266,7 @@ void MainWindowKlient::on_pushButton_3_clicked() //заказать
 void MainWindowKlient::UpdateBasket(){
 
     Products.clear();
+    ComplBike.clear();
 
     TotalPrice = 0;
 
@@ -307,8 +308,23 @@ void MainWindowKlient::UpdateBasket(){
             ui->tableWidget_SimpleBike->update();
             i++;
 
+            QSqlQuery query;
+            if (query.exec("SELECT id_complect FROM Schema_sborki WHERE id_velosipeda = " + querySimpleBike.value("id_velosipeda").toString() )){
+
+                while (query.next()){
+                    QSqlQuery query1;
+                    if (query1.exec("SELECT naimenovanie FROM Sklad_Complect WHERE id_complect = " + query.value(0).toString())){
+                        if (query1.first()){
+                            ComplBike.push_back(query1.value(0).toString());
+                        }
+                    }
+                }
+            }
+
         }
     }
+
+    //qDebug()<<ComplBike;
 
     QSqlQuery queryBuildingBike;
     if (queryBuildingBike.exec("SELECT * FROM Velosiped_sborka WHERE kod_vsego_zakaza = '0' AND id_klienta = " + QString::number(IdKlienta))){
@@ -340,8 +356,20 @@ void MainWindowKlient::UpdateBasket(){
             ui->tableWidget_BuildingBike->update();
             i++;
 
+            QSqlQuery query2;
+            if (query2.exec("SELECT id_complect_na_sklade FROM Complect_velosiped_po_zakazu WHERE id_velosipeda = " + queryBuildingBike.value("id_velosipeda").toString()))
+            while (query2.next()){
+                QSqlQuery query3;
+                if (query3.exec("SELECT naimenovanie FROM Sklad_Complect WHERE id_complect_na_sklade = " + query2.value(0).toString())){
+                    if (query3.first()){
+                        ComplBike.push_back(query3.value(0).toString());
+                    }
+                }
+            }
         }
     }
+
+    qDebug()<<ComplBike;
 
     ui->lineEdit_Total->setText(QString::number(TotalPrice));
 }
@@ -468,6 +496,12 @@ void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить з�
             html += Products[i].price;
             html += "рублей ; количество - ";
             html += Products[i].count;
+            html += "<br>";
+            html += "Комплектующие велосипеда:";
+            for (int j = i*8; j < i*8+8; j++){
+                html += "<br>-";
+                html += ComplBike[j];
+            }
             html += "<br>";
         }
 
