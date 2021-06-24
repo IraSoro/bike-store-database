@@ -1,7 +1,6 @@
 #include "windowpostavsika.h"
 #include "ui_windowpostavsika.h"
 
-//TODO: после продлени договоров обновить списки поставщиков, изменить событие после нажатия по списку
 
 WindowPostavsika::WindowPostavsika(int idPostavsika, QWidget *parent) :
     QMainWindow(parent),
@@ -68,7 +67,7 @@ void WindowPostavsika::on_pushButton_Open_clicked()
     ui->lineEdit_Pic->setText(FileName);
 }
 
-void WindowPostavsika::on_pushButton_Show_clicked() //показать заказы
+void WindowPostavsika::on_pushButton_Show_clicked()
 {
     row = 0;
 

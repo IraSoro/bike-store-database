@@ -1,7 +1,6 @@
 #include "windowklient.h"
 #include "ui_windowklient.h"
 
-// TODO: информация об статусе заказов
 
 MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     QMainWindow(parent),
@@ -11,20 +10,6 @@ MainWindowKlient::MainWindowKlient( int idKlienta, QWidget *parent) :
     setWindowTitle("Личный кабинет");
 
     IdKlienta = idKlienta;
-
-//    QSqlQuery query;
-
-//    if (query.exec("SELECT model FROM Sklad_Velosipedov WHERE kolichestvo_na_sklade > 0")){
-//        int i = 0;
-//        while (query.next()){
-//            QListWidgetItem * newItem = new QListWidgetItem ;
-//            newItem -> setText(query.value(0).toString());
-//            ui->listWidget -> insertItem(i , newItem);
-//            i++;
-//        }
-//    }
-
-//    ui->pushButton_2->setEnabled(false);
 
     int priv = 0, uprav = 0, ped = 0, torm = 0, kol = 0, rez = 0, tros = 0, ram = 0;
     QSqlQuery queryBiuldBike;
@@ -98,9 +83,6 @@ MainWindowKlient::~MainWindowKlient()
 void MainWindowKlient::UpdateStatusOrder(){
     QDate Now = QDate::currentDate();
 
-    //QString DateBuilding = QDate::currentDate().addDays(20).toString(Qt::ISODateWithMs);
-    //QString DateDelivery = QDate::currentDate().addDays(30).toString(Qt::ISODateWithMs);
-
     QSqlQuery queryGetOrder;
 
     int made = 0, way = 0, deliv = 0;
@@ -132,64 +114,6 @@ void MainWindowKlient::UpdateStatusOrder(){
 
 }
 
-//void MainWindowKlient::on_pushButton_clicked()  //показать
-//{
-//    SelectedBike = ui->listWidget->currentIndex().data().toString();
-//    QSqlQuery query;
-
-//    if (query.exec("SELECT * FROM Sklad_Velosipedov WHERE model = \'" +
-//                   SelectedBike + "\'")){
-//        if (query.next()){
-//            QPixmap img;
-//            img.loadFromData(query.value("pic").toByteArray(),"jpg");
-//            QGraphicsScene *scene = new QGraphicsScene;
-//            scene->addPixmap(img.scaled(150,130));
-//            ui->graphicsView->setScene(scene);
-//            ui->textEdit->setText(query.value("opisanie").toString());
-//            ui->pushButton_2->setEnabled(true);
-//            IdBike = query.value("id_velosipeda").toInt();
-//            qDebug()<<"IdBike = "<<IdBike;
-//            CodeBike = query.value("kod_velosipeda").toString();
-//            PriceSimpleBike = query.value("cena").toDouble();
-//        }
-//    }
-//}
-
-//void MainWindowKlient::on_pushButton_2_clicked() //добавить
-//{
-
-//    QSqlQuery query;
-
-//    if (query.exec("SELECT kolichestvo_na_sklade FROM Sklad_Velosipedov WHERE id_velosipeda = " +QString::number(IdBike))){
-//        if (query.next()){
-//            if (query.value(0).toInt() < ui->spinBox->value()){
-//                QMessageBox msgBox;
-//                msgBox.setText("Такое количество данной модели отсутствует на складе.\nВведите количество по-меньше.");
-//                msgBox.exec();
-//                return;
-//            }
-//        }
-//    }
-
-//    QSqlQuery queryOrderBike;
-
-//    if (queryOrderBike.exec("INSERT INTO ZakazVelosipeda (id_velosipeda, kod_velosipeda, kolichestvo_v_zakaze, id_klienta, cena)"
-//                            "VALUES (" + QString::number(IdBike) + ", \'" + CodeBike + "\', " + QString::number(ui->spinBox->value()) +"," +
-//                            QString::number(IdKlienta) + ", "+ QString::number(PriceSimpleBike) + ")")){
-//        QMessageBox msgBox;
-//        msgBox.setText("Велосипед добавлен в корзину.");
-//        msgBox.exec();
-
-
-//        ui->graphicsView->setScene(0);
-//        ui->textEdit->clear();
-//        ui->pushButton_2->setEnabled(false);
-
-//        UpdateBasket();
-
-//    }
-
-//}
 
 void MainWindowKlient::on_action_triggered()
 {
@@ -197,7 +121,7 @@ void MainWindowKlient::on_action_triggered()
     emit firstWindow();
 }
 
-void MainWindowKlient::on_pushButton_3_clicked() //заказать
+void MainWindowKlient::on_pushButton_3_clicked()
 {
     QVector <QString> View;
     QString Privod = ui->listWidget_Privod->currentIndex().data().toString();
@@ -324,8 +248,6 @@ void MainWindowKlient::UpdateBasket(){
         }
     }
 
-    //qDebug()<<ComplBike;
-
     QSqlQuery queryBuildingBike;
     if (queryBuildingBike.exec("SELECT * FROM Velosiped_sborka WHERE kod_vsego_zakaza = '0' AND id_klienta = " + QString::number(IdKlienta))){
 
@@ -426,7 +348,7 @@ void MainWindowKlient::on_pushButton_Price_clicked()
     ui->pushButton_3->setEnabled(true);
 }
 
-void MainWindowKlient::on_pushButton_PayBasket_clicked()  //оплатить заказ
+void MainWindowKlient::on_pushButton_PayBasket_clicked()
 {
     QSqlQuery queryTotalOrder, querySimpleBike, queryBiuldingBike, querySetId;
 

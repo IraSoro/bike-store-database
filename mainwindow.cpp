@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_pushButton_clicked() //вход клиента
+void MainWindow::on_pushButton_clicked()
 {
     QString LineEditLogin = ui->lineEdit->text();
     QString LineEditParol = ui->lineEdit_2->text();
@@ -66,13 +66,11 @@ void MainWindow::on_pushButton_clicked() //вход клиента
         }
         ui->lineEdit->clear();
         ui->lineEdit_2->clear();
-    } else {
-        //qDebug() << query.lastError().text() << " " << query.lastError().number();
     }
 
 }
 
-void MainWindow::on_pushButton_2_clicked() //регистрация клиента
+void MainWindow::on_pushButton_2_clicked()
 {
     WindowRegKlient = new MainWindowRegKlient();
     connect(WindowRegKlient, &MainWindowRegKlient::firstWindow, this, &MainWindow::show);
@@ -80,13 +78,10 @@ void MainWindow::on_pushButton_2_clicked() //регистрация клиент
     this->close();
 }
 
-void MainWindow::on_pushButton_3_clicked() //вход поставщика
+void MainWindow::on_pushButton_3_clicked()
 {
     QString LineEditLogin = ui->lineEdit_3->text();
     QString LineEditParol = ui->lineEdit_4->text();
-
-//    LineEditLogin = "111";
-//    LineEditParol = "111";
 
     if (LineEditLogin == "" || LineEditParol == ""){
         QMessageBox msgBox;
@@ -120,8 +115,6 @@ void MainWindow::on_pushButton_3_clicked() //вход поставщика
         }
         ui->lineEdit_3->clear();
         ui->lineEdit_4->clear();
-    } else {
-        //qDebug() << query.lastError().text() << " " << query.lastError().number();
     }
 
 }
@@ -130,9 +123,6 @@ void MainWindow::on_pushButton_Pred_clicked()
 {
     QString LineEditKod = ui->lineEdit_KodPred->text();
     QString LineEditParol = ui->lineEdit_ParolPred->text();
-
-    LineEditKod = "П-1";
-    LineEditParol = "1";
 
     if (LineEditKod == "" || LineEditParol == ""){
         QMessageBox msgBox;

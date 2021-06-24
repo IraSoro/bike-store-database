@@ -1,4 +1,3 @@
-// TODO:    в схеме цена не очищается!!!! проверить код поставщика и во всех таблицах (он разный!!!), проверить итоговую цену (возможно она не умножается на количество товаров)
 #include "windowpredpriatia.h"
 #include "ui_windowpredpriatia.h"
 
@@ -81,7 +80,6 @@ void WindowPredpriatia::UpdateForm(){
             QListWidgetItem * newItemDate = new QListWidgetItem ;
             newItemDate -> setText(queryContract.value("kod_dogovora").toString());
 
-            //QDate StartContract = queryContract.value("data_nachala").toDate();
             QDate FinishContract = queryContract.value("data_okonchania").toDate();
             QDate Now = QDate::currentDate();
 
@@ -89,7 +87,6 @@ void WindowPredpriatia::UpdateForm(){
 
             bool prolong = queryContract.value("prodlen").toBool();
 
-            //qDebug()<<"days = "<<days;
             if (days < 0 && prolong == 0){
                 ui->listWidget_Overdue-> insertItem(i , newItemDate);
             }
@@ -105,54 +102,48 @@ void WindowPredpriatia::UpdateForm(){
 
 
     int priv = 0, uprav = 0, ped = 0, torm = 0, kol = 0, rez = 0, tros = 0, ram = 0;
-//    QSqlQuery queryBiuldBike;
-//    if (queryBiuldBike.exec("SELECT * FROM Sklad_Complect")){
-//        while (queryBiuldBike.next()){
-//            QString View = "";
-//            QString Model = queryBiuldBike.value("naimenovanie").toString();
-            QSqlQuery querySearchView;
-            if (querySearchView.exec("SELECT kategoria, naimenovanie FROM PostavlyaemoeComplect")){
-                while (querySearchView.next()){
-                QString View = querySearchView.value("kategoria").toString();
-                QListWidgetItem * newItem = new QListWidgetItem ;
-                QString Model = querySearchView.value("naimenovanie").toString();
-                newItem -> setText(Model);
-                if (View == "Привод"){
-                    ui->listWidget_Privod->insertItem(priv , newItem);
-                    priv++;
-                } else
-                if (View == "Управление"){
-                    ui->listWidget_Upravl->insertItem(uprav, newItem);
-                    uprav++;
-                } else
-                if (View == "Педали"){
-                    ui->listWidget_Pedal->insertItem(ped, newItem);
-                    ped++;
-                } else
-                if (View == "Тормоза и запчасти"){
-                    ui->listWidget_Tormoz->insertItem(torm, newItem);
-                    torm++;
-                } else
-                if (View == "Колеса"){
-                    ui->listWidget_Kolesa->insertItem(kol, newItem);
-                    kol++;
-                } else
-                if (View == "Резина"){
-                    ui->listWidget_Rezina->insertItem(rez, newItem);
-                    rez++;
-                } else
-                if (View == "Тросы и оплетки"){
-                    ui->listWidget_Tros->insertItem(tros, newItem);
-                    tros++;
-                } else
-                if (View == "Рамки, вилки, задние амортизаторы"){
-                    ui->listWidget_Ramki->insertItem(ram, newItem);
-                    ram++;
-                }
+
+    QSqlQuery querySearchView;
+    if (querySearchView.exec("SELECT kategoria, naimenovanie FROM PostavlyaemoeComplect")){
+            while (querySearchView.next()){
+            QString View = querySearchView.value("kategoria").toString();
+            QListWidgetItem * newItem = new QListWidgetItem ;
+            QString Model = querySearchView.value("naimenovanie").toString();
+            newItem -> setText(Model);
+            if (View == "Привод"){
+                ui->listWidget_Privod->insertItem(priv , newItem);
+                priv++;
+            } else
+            if (View == "Управление"){
+                ui->listWidget_Upravl->insertItem(uprav, newItem);
+                uprav++;
+            } else
+            if (View == "Педали"){
+                ui->listWidget_Pedal->insertItem(ped, newItem);
+                ped++;
+            } else
+            if (View == "Тормоза и запчасти"){
+                ui->listWidget_Tormoz->insertItem(torm, newItem);
+                torm++;
+            } else
+            if (View == "Колеса"){
+                ui->listWidget_Kolesa->insertItem(kol, newItem);
+                kol++;
+            } else
+            if (View == "Резина"){
+                ui->listWidget_Rezina->insertItem(rez, newItem);
+                rez++;
+            } else
+            if (View == "Тросы и оплетки"){
+                ui->listWidget_Tros->insertItem(tros, newItem);
+                tros++;
+            } else
+            if (View == "Рамки, вилки, задние амортизаторы"){
+                ui->listWidget_Ramki->insertItem(ram, newItem);
+                ram++;
             }
         }
-//        }
-//    }
+    }
 
     ui->pushButton_AddedSchema->setEnabled(false);
 }
@@ -191,12 +182,12 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
 
     queryPred.exec("SELECT * FROM Predpriatie WHERE id_predpriatia = " + QString::number(IdPred));
     if (queryPred.first()){
-        //qDebug()<<queryPred.value("kod_predpriatia").toString();
+
     }
 
     queryPos.exec("SELECT * FROM Postavsik WHERE kod_postavsika = \'" + LineEditKod+ "\'");
     if (queryPos.first()){
-        //qDebug()<<queryPos.value(0).toString();
+
     }
 
     queryDoc.exec("UPDATE Dogovor_s_Postavsikom SET data_nachala = \'" + DateEditStart.toString(Qt::ISODateWithMs) +
@@ -205,7 +196,7 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
 
     queryGet.exec("SELECT * FROM Dogovor_s_Postavsikom WHERE id_postavsika = " + queryPos.value("id_postavsika").toString());
     if (queryGet.first()){
-        //qDebug()<<queryGet.value(0).toString();
+
     }
 
 
@@ -330,10 +321,6 @@ void WindowPredpriatia::on_pushButton_add_post_clicked()
     }
     file10.close();
 
-//    html += "<br>Предприятие: " + queryPred.value("kod_predpriatia").toString()+"<br>"
-//    "Директор: " + queryPred.value("fio_directora").toString()+"<br>"
-//    "Поставляемая организация: " + queryPos.value("nazvanie").toString()+"<br>"
-//    "Директор организации: " + queryPos.value("foi_directora_postavsika").toString()+"<br>"
     html += "<br><br>Дата начала действия договора: " + DateEditStart.toString(Qt::ISODateWithMs)+"<br>"
     "Дата окончания действия договора: " + DateEditFinish.toString(Qt::ISODateWithMs) +"<br>"
     "</p>"
@@ -376,14 +363,12 @@ void WindowPredpriatia::on_pushButton_ShowKat_clicked()
 
 
     QString SelectedPost = ui->listWidget_Post->currentIndex().data().toString();
-    //qDebug()<<"SelectedPost = "<<SelectedPost;
 
     QSqlQuery querySearchPost;
 
     if (querySearchPost.exec("SELECT id_postavsika FROM Postavsik WHERE nazvanie = \'" + SelectedPost + "\'")){
         if (querySearchPost.first()){
             IdSelectedPost = querySearchPost.value(0).toInt();
-            //qDebug()<<"id = "<<IdSelectedPost;
         }
     }
 
@@ -425,7 +410,6 @@ void WindowPredpriatia::on_pushButton_ShowModel_clicked()
 
 
     QString SelectedKat = ui->listWidget_Kat->currentIndex().data().toString();
-    //qDebug()<<"SelectedPost = "<<SelectedPost;
 
     QSqlQuery querySearchPost;
 
@@ -453,7 +437,7 @@ void WindowPredpriatia::on_pushButton_ShowModel_clicked()
 }
 
 
-void WindowPredpriatia::on_pushButton_AddCount_clicked()  //добавить в корзину
+void WindowPredpriatia::on_pushButton_AddCount_clicked()
 {
     if (ui->spinBox->value() == 0){
         QMessageBox msgBox;
@@ -476,11 +460,9 @@ void WindowPredpriatia::on_pushButton_AddCount_clicked()  //добавить в 
     queryCompl.first();
 
     QString SelectCompl = queryCompl.value("id_complect").toString();
-    qDebug()<<"------"<<SelectCompl;
 
     queryPos.exec("SELECT * FROM Postavsik WHERE id_postavsika = " + QString::number(IdSelectedPost));
     queryPos.first();
-    qDebug()<<"------"<<queryPos.value("id_postavsika").toString();
 
     QString kodZakaza = "0";
 
@@ -499,8 +481,6 @@ void WindowPredpriatia::on_pushButton_AddCount_clicked()  //добавить в 
         ui->listWidget_Model->clear();
         ui->listWidget_Kat->clear();
 
-    }else {
-        //qDebug()<<"no";
     }
 }
 
@@ -591,15 +571,7 @@ void WindowPredpriatia::on_pushButton_Pay_clicked()
                                "VALUES (1, \'" + kodZakaza + "\', \'" + StartDate + "\' , \'" + FinishDate + "\', " + QString::number(sum) + ")")){
 
         }
-//        QString IdOrder = "";
         while (queryZakazCompl.next()){
-//            QSqlQuery queryGetIdOrder;
-//            if (queryGetIdOrder.exec("SELECT max(id_zakaza) FROM Zakaz_postavsiku")){
-//                IdOrder = queryGetIdOrder.value("max(id_zakaza)").toString();
-//                qDebug()<<"order = "<<IdOrder;
-//            }
-
-
             QSqlQuery queryAddIdOrder;
             if (queryAddIdOrder.exec("UPDATE Zakaz_complect SET id_zakaza = (SELECT max(id_zakaza) FROM Zakaz_postavsiku), "
                                      "kod_zakaza = \'" + kodZakaza + "\' "
@@ -802,7 +774,6 @@ void WindowPredpriatia::ConclusionNewContract(QDate start, QDate finish, QString
             QListWidgetItem * newItemDate = new QListWidgetItem ;
             newItemDate -> setText(queryContract.value("kod_dogovora").toString());
 
-            //QDate StartContract = queryContract.value("data_nachala").toDate();
             QDate FinishContract = queryContract.value("data_okonchania").toDate();
             QDate Now = QDate::currentDate();
 
@@ -826,7 +797,7 @@ void WindowPredpriatia::ConclusionNewContract(QDate start, QDate finish, QString
 
 }
 
-void WindowPredpriatia::on_pushButton_5_clicked()  //продление договора
+void WindowPredpriatia::on_pushButton_5_clicked()
 {
 
     QString kodDogovora = ui->listWidget_Soon->currentIndex().data().toString();
@@ -849,7 +820,7 @@ void WindowPredpriatia::on_pushButton_5_clicked()  //продление дого
 
 }
 
-void WindowPredpriatia::on_pushButton_6_clicked() //просроченные договора, заключить заново
+void WindowPredpriatia::on_pushButton_6_clicked()
 {
     QString kodDogovora = ui->listWidget_Overdue->currentIndex().data().toString();
     if (kodDogovora == ""){
@@ -911,15 +882,11 @@ void WindowPredpriatia::on_pushButton_Price_clicked()
     QString IdCompl = "";
 
     for (int i = 0; i < View.size(); i++){
-//        if (queryPrice.exec("SELECT * FROM Sklad_Complect WHERE naimenovanie = \'" + View[i] + "\'")){
-//            queryPrice.first();
-//            IdCompl = queryPrice.value("id_complect").toString();
-            QSqlQuery queryPriceInPost;
-            if (queryPriceInPost.exec("SELECT cena FROM PostavlyaemoeComplect WHERE naimenovanie = \'" + View[i] + "\'")){
-                queryPriceInPost.first();
-                sumSchema += queryPriceInPost.value(0).toInt();
-            }
-//        }
+        QSqlQuery queryPriceInPost;
+        if (queryPriceInPost.exec("SELECT cena FROM PostavlyaemoeComplect WHERE naimenovanie = \'" + View[i] + "\'")){
+            queryPriceInPost.first();
+            sumSchema += queryPriceInPost.value(0).toInt();
+        }
     }
 
     int PriceWork = 10000;
